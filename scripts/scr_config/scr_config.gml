@@ -1,0 +1,270 @@
+#macro CONFIG_PATH "configs/"
+#macro CONFIG_FILTER "RoomFactory game configuration|*.rfcfg"
+#macro CONFIG_VERSION 1
+
+#macro CONFIG_LAYER_INSTANCE "instance"
+#macro CONFIG_LAYER_BACKGROUND "background"
+#macro CONFIG_LAYER_TILE "tile"
+#macro CONFIG_LAYER_ASSET "asset"
+
+global.config = {}
+global.configSprites = ds_map_create()
+
+///@param {String} name
+function config_load(name)
+{
+	// temp until a proper UI is made for selecting the config
+	//var path = concat(CONFIG_PATH, name)
+	var path = name
+	if !file_exists(path)
+		return false;
+	
+	var str = file_text_read_all(path)
+	var json = json_parse(str)
+	
+	if (json.version != CONFIG_VERSION)
+	{
+		print("Invalid config version: expected ", CONFIG_VERSION, ", got ", json.version)
+		return false;
+	}
+	
+	global.config = json
+	print($"Loaded config {json.name}, version {json.version}")
+	
+	obj_mainUI.currentLayer = config_find_instance_layer().name
+	return true;
+}
+
+function config_unload()
+{
+	if !config_loaded()
+	{
+		print("No config currently loaded!")
+		return false;
+	}
+	
+	print($"Unloading config {global.config.name}")
+	delete global.config;
+	global.config = {}
+	
+	var key = ds_map_find_first(global.configSprites)
+	for (var i = 0, n = ds_map_size(global.configSprites); i < n; i++)
+	{
+		var val = ds_map_find_value(global.configSprites, key)
+		if sprite_exists(val)
+			sprite_delete(val)
+		
+		key = ds_map_find_next(global.configSprites, key)
+	}
+	ds_map_clear(global.configSprites)
+	
+	obj_mainUI.currentLayer = undefined
+	return true;
+}
+
+function config_loaded()
+{
+	return (struct_names_count(global.config) > 0);
+}
+
+///@param {String} name
+///@param {Bool} isDisplayName
+function config_get_layer(name, isDisplayName = false)
+{
+	if !config_loaded()
+	{
+		print("No configuration loaded yet!")
+		return undefined;
+	}
+	
+	if !struct_exists(global.config, "layers")
+	{
+		print("No layers have been defined, current configuration may be invalid!")
+		return undefined;
+	}
+	
+	for (var i = 0, n = array_length(global.config[$ "layers"]); i < n; i++)
+	{
+		var lay = global.config[$ "layers"][i]
+		if (!isDisplayName && lay.name != name)
+			continue;
+		if (isDisplayName && lay.displayName != name)
+			continue;
+		
+		return lay;
+	}
+	
+	print("Can't find specified layer")
+	return undefined;
+}
+
+function config_get_layers()
+{
+	var arr = []
+	
+	if !config_loaded()
+	{
+		print("No configuration loaded yet!")
+		return arr;
+	}
+	
+	if !struct_exists(global.config, "layers")
+	{
+		print("No layers have been defined, current configuration may be invalid!")
+		return arr;
+	}
+	
+	for (var i = 0, n = array_length(global.config[$ "layers"]); i < n; i++)
+	{
+		var lay = global.config[$ "layers"][i]
+		array_push(arr, lay)
+	}
+	
+	return arr;
+}
+
+function config_get_current_layer()
+{
+	return config_get_layer(obj_mainUI.currentLayer);
+}
+
+function config_find_instance_layer()
+{
+	if !config_loaded()
+	{
+		print("No configuration loaded yet!")
+		return undefined;
+	}
+	
+	if !struct_exists(global.config, "layers")
+	{
+		print("No layers have been defined, current configuration may be invalid!")
+		return undefined;
+	}
+	
+	for (var i = 0, n = array_length(global.config[$ "layers"]); i < n; i++)
+	{
+		var lay = global.config[$ "layers"][i]
+		if (lay.type != CONFIG_LAYER_INSTANCE)
+			continue;
+		
+		return lay;
+	}
+	
+	print("Can't find any instance layers defined in the current configuration")
+	return undefined;
+}
+
+function config_get_objects()
+{
+	if !config_loaded()
+	{
+		print("No configuration loaded yet!")
+		return undefined;
+	}
+	
+	var lay = config_get_current_layer()
+	if (lay.type != CONFIG_LAYER_INSTANCE)
+	{
+		print("Incorrect current layer type")
+		return undefined;
+	}
+	
+	if !struct_exists(lay, "objects")
+	{
+		print("No objects defined for current layer!")
+		return undefined;
+	}
+	
+	return lay[$ "objects"];
+}
+
+///@param {String} name
+function config_get_object_category(name)
+{
+	if !config_loaded()
+	{
+		print("No configuration loaded yet!")
+		return undefined;
+	}
+	
+	var objects = config_get_objects()
+	if is_undefined(objects)
+	{
+		print("Object array is undefined")
+		return undefined;
+	}
+	
+	for (var i = 0, n = array_length(objects); i < n; i++)
+	{
+		var cat = objects[i]
+		if (cat.name != name)
+			continue;
+		
+		return cat;
+	}
+	
+	print("Can't find object category ", name)
+	return undefined;
+}
+
+///@param {String} name
+///@param {String} layerName
+function config_get_objectdata(name, layname)
+{
+	var lay = config_get_layer(layname)
+	if (lay.type != CONFIG_LAYER_INSTANCE)
+	{
+		print("Incorrect layer type")
+		return undefined;
+	}
+	
+	for (var i = 0, n = array_length(lay.objects); i < n; i++)
+	{
+		var cat = lay.objects[i]
+		for (var j = 0, m = array_length(cat.objects); j < m; j++)
+		{
+			var obj = cat.objects[j]
+			if (obj.id != name)
+				continue;
+			
+			return obj;
+		}
+	}
+}
+
+///@param {String} objectID
+function config_get_object_sprite(objectID)
+{
+	var spr = ds_map_find_value(global.configSprites, objectID)
+	if (spr != undefined)
+		return spr;
+	
+	return undefined;
+}
+
+///@param {Struct} objectData
+function config_get_objectdata_sprite(objectData)
+{
+	var spr = ds_map_find_value(global.configSprites, objectData[$ "id"])
+	if (spr != undefined)
+		return spr;
+	
+	if !struct_exists(objectData, "sprite")
+	{
+		print("Can't get object sprite: No sprite base64 string present")
+		return undefined;
+	}
+	
+	var offX = 0
+	var offY = 0
+	if struct_exists(objectData, "spriteX")
+		offX = objectData[$ "spriteX"]
+	if struct_exists(objectData, "spriteY")
+		offY = objectData[$ "spriteY"]
+	
+	print("Adding sprite for ", objectData[$ "id"])
+	var s = sprite_add(objectData[$ "sprite"], 1, false, false, offX, offY)
+	ds_map_set(global.configSprites, objectData[$ "id"], s)
+	return s;
+}

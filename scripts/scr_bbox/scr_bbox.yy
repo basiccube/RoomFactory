@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_bbox",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_bbox",
+  "parent":{
+    "name":"RoomFactory",
+    "path":"RoomFactory.yyp",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

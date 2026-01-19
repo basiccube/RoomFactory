@@ -1,0 +1,122 @@
+{
+	"name" : "ANTONBLAST",
+	"version" : 1,
+	
+	"roomDefaults" : {
+		"width" : 384,
+		"height" : 216
+	},
+	
+	"layers" : [
+		{
+			"name" : "InstancesFG",
+			"displayName" : "Instances (FG)",
+			"depth" : 100,
+			"type" : "instance",
+			
+			"objects" : [
+				{
+					"name" : "Collision",
+					"objects" : [
+						{
+							"name" : "Block",
+							"id" : "ob_block",
+							"sprite" : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAiUlEQVR4nGORU/H5z0ABYAER82YUkKU5KWMCxABs4Pjx43D2lq17UOR8vF0YLC0tES4AgeqaZrJcgdMFJBsgLaXA8PTZA/q5YNq0xZQZgNUFxHrj/Pk72A0gBWRlxWJPB6QGJtEuABmM1wCQk2Ahi0sxyS4wNFSBs2FJF68BIFeQCsAGgEKTXAAAX1MjgpLqCZEAAAAASUVORK5CYII="
+						},
+						{
+							"name" : "One Way Platform",
+							"id" : "ob_passthrough",
+							"sprite" : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAR0lEQVR4nGORU/H5z0ABYAER82YUkKU5KWMCxAAQOH78OEmaLS0tES6gBAwiA2B+IssAUGiS7YJHd7Ywkq0b5oJRA4Z6GAAAAfIMRgFapOoAAAAASUVORK5CYII="
+						},
+						{
+							"name" : "Ladder",
+							"id" : "ob_ladder",
+							"sprite" : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAL0lEQVR4nGNpbm7+zwAEtbW1jCCaWADTx4IuQCqAG0CxC8gF1DNgNAxGw2BopwMAGKsg6dJMzkUAAAAASUVORK5CYII="
+						},
+						{
+							"name" : "Slope 45",
+							"id" : "ob_slope45",
+							"sprite" : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAJFJREFUOI1jkFPx+c9AAWBiYGBgoMQQJgYGBoZ5MwrINoQJxiDXELgBx48fJ8sQJmQOOYagGHD+/B2SDWFCFyDVEAwDGBgYGLZs3UO0IVgNIMUQnAYQawheA4gxhAWbJmkpBRT++fN3GBigiS0pg+H/oztbGLEaYGiogtc1MJcgGwI3wNLSkpBv4ADZEEZKszMANSJc9M2OWfkAAAAASUVORK5CYII="
+						},
+						{
+							"name" : "Slope 22",
+							"id" : "ob_slope22",
+							"sprite" : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAQCAYAAAB3AH1ZAAAAAXNSR0IArs4c6QAAALtJREFUSInF1TEKgzAUxvG/JadQEAcv4OjerZ6iU0eP4+QpdHN3zAUcpKDXsJOiNrZRNPmm9wIhP14gwQ+TwQ+TAUu5AeRZii2IGIs8SwF4vhgA3k3hGAXUdW0FIuaNlM1Um4KI9YKUDV3fUpQVyeN+OeQLME9RVpdDfgJMQJQAzw3o+tYIRGsCV0IOAc6EbAI8N1j0qis5A6I9gTVIBTsCWQCiKNT1/N2j+7JOgDiOdx++J1sQx+ZXDPABDR6UHEK3fGgAAAAASUVORK5CYII="
+						},
+						{
+							"name" : "One Way Slope 45",
+							"id" : "ob_passthroughSlope45",
+							"sprite" : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAGtJREFUOI2l06sRgEAMBNAlhaAohypQSEpBoqhkfcq6U8wwcJ8kF7W74rlgXtaEkSOZRhABgPs6EEUEAFQ1jMgTooi8SwSR7+BFfoAXKQIepApYkSZgQbpADzEBLcQM1BAXUEImkuFP3PYTGcPQUIm1vdGMAAAAAElFTkSuQmCC"
+						},
+						{
+							"name" : "One Way Slope 22",
+							"id" : "ob_passthroughSlope22",
+							"sprite" : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAQCAYAAAB3AH1ZAAAAAXNSR0IArs4c6QAAAIJJREFUSInF1aENgDAUhOGfpHOgOg5TVFUyChLFFMj6twSKRYrCQAiFtq+nLqc+d/R2iL0dIo1ilnkEwHkiwL6tnSoAQERoBTFnEREAdYi5DtqQG0Ab8gjQgrwCakOSAbUgnwGlIb8BpSDZgFxIMcBfSHHAV0g1QCqkCyE0uWLnJwAOSaR4jov5/mUAAAAASUVORK5CYII="
+						}
+					]
+				},
+				{
+					"name" : "Spawn Points",
+					"objects" : [
+						{
+							"name" : "Elevator",
+							"id" : "ob_elevator",
+							"sprite" : "data:image/png;base64,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",
+							"spriteX" : 47,
+							"spriteY" : 111
+						}
+					]
+				}
+			]
+		},
+		{
+			"name" : "InstancesBG",
+			"displayName" : "Instances (BG)",
+			"depth" : 300,
+			"type" : "instance",
+			
+			"objects" : [
+				{
+					"name" : "Collision",
+					"objects" : [
+						{
+							"name" : "Block",
+							"id" : "ob_block_BG",
+							"sprite" : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAARklEQVR4nGNhYGD4D8Q4AQuI2LNnD4bE8ePHGWprayEKQGDK5FUoCoxNZBEmwMDNW2fxK8DpBoIKQA4CGQkzFkMByLW4AABmLRFNjIvc5gAAAABJRU5ErkJggg=="
+						},
+						{
+							"name" : "One Way Platform",
+							"id" : "ob_passthrough_BG",
+							"sprite" : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAANElEQVR4nGNhYGD4D8Q4AQuI2LNnD1ZJFxcXiAIQOH78OIqkpaUlwgSQSnxWMBJ0A20VAABPUgftxNWHwAAAAABJRU5ErkJggg=="
+						},
+						{
+							"name" : "Ladder",
+							"id" : "ob_ladder_BG",
+							"sprite" : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAIUlEQVR4nGMJ8E/7v2HjLEYGLAAkxwJjYFMAAmAFQ94EADiNGjUDzueqAAAAAElFTkSuQmCC"
+						},
+						{
+							"name" : "Slope 45",
+							"id" : "ob_slope45_BG",
+							"sprite" : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAAEZJREFUGJVjYGBg+M+ABzBBaZyKmBgYGBj27NmDUxHMBJyK4Aqqa5qxKoIrkJZSwKqIkYGB4T9UEAW4uLgwMDAwMDIS8iYA8mMXH8KziFsAAAAASUVORK5CYII="
+						},
+						{
+							"name" : "Slope 22",
+							"id" : "ob_slope22_BG",
+							"sprite" : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAICAYAAADwdn+XAAAAAXNSR0IArs4c6QAAAGJJREFUKJGlkUEKgDAMBKfSV7SXPia/0pvfymO86DfaSytBwdK6EMgSGJYNQK4zpQVAVZkFOSBXAAAiYm9d+bas245Jg4i0NJ+gGxBD4ryOYZC3JoYEMAR6ddDTsyP354UABUmRJa9ul0WvAAAAAElFTkSuQmCC"
+						},
+						{
+							"name" : "One Way Slope 45",
+							"id" : "ob_passthroughSlope45_BG",
+							"sprite" : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAADtJREFUGJV9zzEOACAMQtEvZ+ux2XssnUw0acsEyVsA2AyRbSYkgAkJIDNbpFs6pHdU6AMVWrbbBxHBAU1SIZKAX25HAAAAAElFTkSuQmCC"
+						},
+						{
+							"name" : "One Way Slope 22",
+							"id" : "ob_passthroughSlope22_BG",
+							"sprite" : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAICAYAAADwdn+XAAAAAXNSR0IArs4c6QAAAFJJREFUKJGd0UEKgEAMQ9GvzNFy7OxzrHFjZ6Eo1kChdPEIFGCe8yub7Qkgad06wA6QBNvYptto1JIEoBAkFfLaaFwPXegGdKFH4Cu0vtBNfe0AYhUsITP5WwQAAAAASUVORK5CYII="
+						}
+					]
+				}
+			]
+		}
+	]
+}

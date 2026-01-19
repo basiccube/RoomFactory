@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_config",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_config",
+  "parent":{
+    "name":"RoomFactory",
+    "path":"RoomFactory.yyp",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
