@@ -50,6 +50,7 @@ if (selectedObject != undefined && instance_exists(selectedObject))
 	{
 		var dragThreshold = 2
 		var startResize = false
+		
 		if bbox_on_right_edge(mouse_x, mouse_y, selectedObject)
 		{
 			if (sign(selectedObject.image_xscale) > 0)
@@ -68,12 +69,18 @@ if (selectedObject != undefined && instance_exists(selectedObject))
 		}
 		else if bbox_on_top_edge(mouse_x, mouse_y, selectedObject)
 		{
-			resizeDir = resizeType.top
+			if (sign(selectedObject.image_yscale) > 0)
+				resizeDir = resizeType.top
+			else
+				resizeDir = resizeType.bottom
 			startResize = true
 		}
 		else if bbox_on_bottom_edge(mouse_x, mouse_y, selectedObject)
 		{
-			resizeDir = resizeType.bottom
+			if (sign(selectedObject.image_yscale) > 0)
+				resizeDir = resizeType.bottom
+			else
+				resizeDir = resizeType.top
 			startResize = true
 		}
 		else if (abs(window_mouse_get_delta_x()) >= dragThreshold || abs(window_mouse_get_delta_y()) >= dragThreshold)
@@ -132,20 +139,24 @@ if (selectedObject != undefined && instance_exists(selectedObject))
 		switch resizeDir
 		{
 			case resizeType.right:
+				var leftBBox = resizeSavedBBox[0]
+				if (resizeSavedScale[0] < 0)
+					leftBBox = resizeSavedBBox[1]
+			
 				var initialSize = resizeInitialWidth
-				var newSize = x - resizeSavedBBox[0]
+				var newSize = x - leftBBox
 				var nx = resizeSavedPos[0]
 				
 				var scale = newSize / initialSize
 				if (sign(scale) == -sign(resizeSavedScale[0]))
 				{
-					nx += resizeInitialWidth
+					nx += resizeInitialWidth * sign(resizeSavedScale[0])
 					scale += sign(scale)
 				}
 				if (scale == 0)
 				{
-					nx += resizeInitialWidth
-					scale = -1
+					nx += resizeInitialWidth * sign(resizeSavedScale[0])
+					scale = -1 * sign(resizeSavedScale[0])
 				}
 				
 				window_set_cursor(cr_size_we)
@@ -153,8 +164,12 @@ if (selectedObject != undefined && instance_exists(selectedObject))
 				selectedObject.image_xscale = scale
 				break
 			case resizeType.left:
+				var leftBBox = resizeSavedBBox[0]
+				if (resizeSavedScale[0] < 0)
+					leftBBox = resizeSavedBBox[1]
+			
 				var initialSize = resizeInitialWidth
-				var newSize = x - resizeSavedBBox[0]
+				var newSize = x - leftBBox
 				var scale = newSize / initialSize
 				
 				var nx = resizeSavedPos[0] + (resizeInitialWidth * scale)
@@ -163,36 +178,51 @@ if (selectedObject != undefined && instance_exists(selectedObject))
 					nxscale -= sign(scale)
 				
 				window_set_cursor(cr_size_we)
-				print(nxscale, ",scale:", scale)
-				
 				selectedObject.x = nx
 				selectedObject.image_xscale = nxscale
 				break
 			
 			case resizeType.top:
+				var topBBox = resizeSavedBBox[2]
+				if (resizeSavedScale[1] < 0)
+					topBBox = resizeSavedBBox[3]
+			
 				var initialSize = resizeInitialHeight
-				var newSize = y - resizeSavedBBox[2]
+				var newSize = y - topBBox
 				var scale = newSize / initialSize
 				
 				var ny = resizeSavedPos[1] + (resizeInitialHeight * scale)
 				var nyscale = resizeSavedScale[1] - scale
+				if (sign(nyscale) == -sign(resizeSavedScale[1]) || nyscale == 0)
+					nyscale -= sign(scale)
 				
 				window_set_cursor(cr_size_ns)
-				if (nyscale > 0)
-				{
-					selectedObject.y = ny
-					selectedObject.image_yscale = nyscale
-				}
+				selectedObject.y = ny
+				selectedObject.image_yscale = nyscale
 				break
 			case resizeType.bottom:
+				var topBBox = resizeSavedBBox[2]
+				if (resizeSavedScale[1] < 0)
+					topBBox = resizeSavedBBox[3]
+			
 				var initialSize = resizeInitialHeight
-				var newSize = y - resizeSavedBBox[2]
+				var newSize = y - topBBox
+				var ny = resizeSavedPos[1]
 				
 				var scale = newSize / initialSize
+				if (sign(scale) == -sign(resizeSavedScale[1]))
+				{
+					ny += resizeInitialHeight * sign(resizeSavedScale[1])
+					scale += sign(scale)
+				}
 				if (scale == 0)
-					scale = 1
+				{
+					ny += resizeInitialHeight * sign(resizeSavedScale[1])
+					scale = -1 * sign(resizeSavedScale[1])
+				}
 				
 				window_set_cursor(cr_size_ns)
+				selectedObject.y = ny
 				selectedObject.image_yscale = scale
 				break
 		}

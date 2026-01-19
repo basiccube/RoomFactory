@@ -90,7 +90,24 @@ if (selectedObject != undefined)
 	{
 		var rcol = c_white
 		if resizingObject
+		{
 			rcol = c_red
+			
+			var prevleft = drawLeftEdge
+			var prevright = drawRightEdge
+			var prevtop = drawTopEdge
+			var prevbottom = drawBottomEdge
+			if (selectedObject.image_xscale < 0)
+			{
+				drawLeftEdge = prevright
+				drawRightEdge = prevleft
+			}
+			if (selectedObject.image_yscale < 0)
+			{
+				drawTopEdge = prevbottom
+				drawBottomEdge = prevtop
+			}
+		}
 		
 		var bleft = selectedObject.bbox_left
 		var bright = selectedObject.bbox_right
