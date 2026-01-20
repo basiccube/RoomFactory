@@ -168,6 +168,122 @@ function ui_layerlist()
 	}
 }
 
+function ui_inspector()
+{
+	if !config_loaded()
+		exit;
+	if instance_exists(obj_objectPlacer)
+		exit;
+		
+	ImGui.SetNextWindowPos(room_width - 10, 32, ImGuiCond.Always, 1, 0)
+	var window_flags = ImGuiWindowFlags.NoDecoration |
+					ImGuiWindowFlags.AlwaysAutoResize |
+					ImGuiWindowFlags.NoSavedSettings |
+					ImGuiWindowFlags.NoFocusOnAppearing |
+					ImGuiWindowFlags.NoNav
+	
+	if ImGui.Begin("Inspector", true, window_flags)
+	{
+		ImGui.Text("Inspector")
+		ImGui.Separator()
+		
+		if (selectedObject != undefined)
+		{
+			ImGui.Text(selectedObject.objectID)
+			ImGui.NewLine()
+			
+			ImGui.Text("Position")
+			
+			var ox = ImGui.InputInt("X", selectedObject.x, 1, 5)
+			selectedObject.x = ox
+			
+			var oy = ImGui.InputInt("Y", selectedObject.y, 1, 5)
+			selectedObject.y = oy
+			
+			ImGui.NewLine()
+			
+			if selectedObject.canResize
+			{
+				ImGui.Text("Scale")
+				
+				var oxscale = ImGui.InputFloat("H", selectedObject.image_xscale, 0.25, 1)
+				selectedObject.image_xscale = oxscale
+				
+				var oyscale = ImGui.InputFloat("V", selectedObject.image_yscale, 0.25, 1)
+				selectedObject.image_yscale = oyscale
+				
+				ImGui.NewLine()
+			}
+			
+			ImGui.Text("Variables")
+			
+			if ImGui.BeginListBox("##Variable Listbox")
+			{
+				for (var i = 0, n = array_length(selectedObject.variables); i < n; i++)
+				{
+					var variable = selectedObject.variables[i]
+					var name = variable[0]
+					var value = variable[1]
+					
+					ImGui.Text(concat(name, " = ", value))
+					
+					ImGui.SameLine()
+					if ImGui.Button("Edit##" + string(i))
+					{
+						print("imagine the window for that...")
+					}
+					
+					ImGui.SameLine()
+					if ImGui.Button("Delete##" + string(i))
+					{
+						array_delete(selectedObject.variables, i, 1)
+						i--
+						n--
+					}
+				}
+				
+				if ImGui.Button("+", 20, 20)
+				{
+					print("not done yet")
+				}
+				ImGui.EndListBox()
+			}
+			
+			ImGui.NewLine()
+			
+			if ImGui.Button("Delete")
+			{
+				instance_destroy(selectedObject)
+				deselectObject()
+			}
+			
+			ImGui.SameLine()
+			if ImGui.Button("Unselect")
+				deselectObject()
+		}
+		else
+		{
+			// room settings
+			var rmstr = "Untitled"
+			if (!is_undefined(global.roomPath) && global.roomPath != "")
+				rmstr = filename_change_ext(filename_name(global.roomPath), "")
+			ImGui.Text(rmstr)
+			ImGui.NewLine()
+		
+			var title = ImGui.InputText("Title", obj_roomManager.roomInfo.title)
+			obj_roomManager.roomInfo.title = title
+		
+			var width = ImGui.DragInt("Width", obj_roomManager.roomInfo.width)
+			obj_roomManager.roomInfo.width = max(width, global.config.roomDefaults.width)
+		
+			var height = ImGui.DragInt("Height", obj_roomManager.roomInfo.height)
+			obj_roomManager.roomInfo.height = max(height, global.config.roomDefaults.height)
+		}
+		
+		ImGui.End()
+	}
+}
+
 function update_titlebar()
 {
 	var rftitle = "Room Factory"
@@ -175,7 +291,13 @@ function update_titlebar()
 	if (is_undefined(global.roomPath) || global.roomPath == "")
 		str = concat("[Untitled] - ", rftitle)
 	else
-		str = concat("[", filename_name(global.roomPath), "] - ", rftitle)
+		str = concat("[", filename_change_ext(filename_name(global.roomPath), ""), "] - ", rftitle)
 		
 	window_set_caption(str)
+}
+
+function draw_mouse_tooltip(offx, offy, str)
+{
+	draw_set_font(mainFont)
+	draw_text(realmouse_x + offx, realmouse_y + offy, str)
 }

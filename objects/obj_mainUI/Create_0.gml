@@ -1,3 +1,5 @@
+#macro UI_MAINFONT "fonts\\OpenSans-Bold.ttf"
+
 enum resizeType
 {
 	right,
@@ -11,7 +13,11 @@ enum resizeType
 #macro INPUT_USED_UI MOUSE_OVER_UI || KEYBOARD_USED_UI
 
 ImGui.__Initialize()
-ImGui.AddFontFromFile("fonts\\OpenSans-Bold.ttf", 16)
+ImGui.AddFontFromFile(UI_MAINFONT, 16)
+
+globalvar mainFont;
+mainFont = font_add(UI_MAINFONT, 10, false, false, 32, 128)
+font_enable_sdf(mainFont, true)
 
 showImGuiAboutWindow = false
 showAboutWindow = false
@@ -24,16 +30,17 @@ gridIncrement = 4
 
 selectedObject = undefined
 draggingObject = false
-dragX = 0
-dragY = 0
+dragPos = new Vector2(0, 0)
 
 resizingObject = false
 resizeDir = resizeType.right
-resizeInitialWidth = 0
-resizeInitialHeight = 0
-resizeSavedPos = [0, 0]
-resizeSavedScale = [1, 1]
-resizeSavedBBox = [0, 0, 0, 0]
+resizeInitialSize = new Vector2(0, 0)
+resizeSpriteOffset = new Vector2(0, 0)
+
+resizeSavedPos = new Vector2(0, 0)
+resizeSavedOffset = new Vector2(0, 0)
+resizeSavedScale = new Scale(1, 1)
+resizeSavedBBox = new Vector4(0, 0, 0, 0)
 
 currentLayer = undefined
 update_titlebar()
@@ -43,3 +50,29 @@ if (p != "")
 	config_load(p)
 else
 	game_end(0)
+	
+selectObject = function(inst)
+{
+	if (selectedObject == inst)
+		exit;
+	
+	print("Selected object: ", inst)
+	selectedObject = inst
+}
+	
+deselectObject = function()
+{
+	if (selectedObject != undefined)
+	{
+		print("Deselected object: ", selectedObject)
+		if instance_exists(selectedObject)
+		{
+			if (selectedObject.image_xscale == 0)
+				selectedObject.image_xscale = 1
+			if (selectedObject.image_yscale == 0)
+				selectedObject.image_yscale = 1
+		}
+		
+		selectedObject = undefined
+	}
+}

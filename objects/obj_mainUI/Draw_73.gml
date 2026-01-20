@@ -1,10 +1,14 @@
 with (instance_position(mouse_x, mouse_y, obj_roomObject))
 {
-	if (layer_get_name(layer) == other.currentLayer)
-	{
-		var c = c_white
-		draw_rectangle_color(bbox_left, bbox_top, bbox_right, bbox_bottom, c, c, c, c, true)
-	}
+	if (layer_get_name(layer) != other.currentLayer)
+		break;
+	if (INPUT_USED_UI || window_mouse_get_locked())
+		break;
+	if (other.draggingObject || other.resizingObject)
+		break;
+	
+	var c = c_white
+	draw_rectangle_color(bbox_left, bbox_top, bbox_right, bbox_bottom, c, c, c, c, true)
 }
 
 if (selectedObject != undefined)
@@ -33,32 +37,29 @@ if (selectedObject != undefined)
 		{
 			case resizeType.left:
 				drawLeftEdge = true
+				window_set_cursor(cr_size_we)
 				break
 			case resizeType.right:
 				drawRightEdge = true
+				window_set_cursor(cr_size_we)
 				break
 			case resizeType.top:
 				drawTopEdge = true
+				window_set_cursor(cr_size_ns)
 				break
 			case resizeType.bottom:
 				drawBottomEdge = true
+				window_set_cursor(cr_size_ns)
 				break
 		}
 	}
-	else if !draggingObject
+	else if draggingObject
+		window_set_cursor(cr_size_all)
+	else
 	{
 		// resize visuals
-		if position_meeting(mouse_x, mouse_y, selectedObject)
+		if (selectedObject.canResize && !window_mouse_get_locked() && position_meeting(mouse_x, mouse_y, selectedObject))
 		{
-			var rcol = c_white
-			if resizingObject
-				rcol = c_red
-				
-			var bleft = selectedObject.bbox_left
-			var bright = selectedObject.bbox_right
-			var btop = selectedObject.bbox_top
-			var bbottom = selectedObject.bbox_bottom
-			
 			if bbox_on_left_edge(mouse_x, mouse_y, selectedObject)
 			{
 				drawEdges = true

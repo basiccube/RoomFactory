@@ -9,5 +9,5 @@ var my = display_mouse_get_y()
 realmouse_x = mx - wx
 realmouse_y = my - wy
 
-if (mx > wx && my > wy && mx < wxend && my < wyend)
+if (mx > wx && my > wy && mx < wxend && my < wyend && !MOUSE_OVER_UI)
 	window_set_cursor(cr_default)

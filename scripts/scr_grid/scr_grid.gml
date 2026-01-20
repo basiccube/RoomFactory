@@ -25,7 +25,7 @@ function grid_snap(xsize, ysize)
 
 function ui_gridsize()
 {
-	ImGui.SetNextWindowPos(room_width - 10, 32, ImGuiCond.Always, 1)
+	ImGui.SetNextWindowPos(room_width - 10, room_height - 8, ImGuiCond.Always, 1, 1)
 	var window_flags = ImGuiWindowFlags.NoDecoration |
 					ImGuiWindowFlags.AlwaysAutoResize |
 					ImGuiWindowFlags.NoSavedSettings |

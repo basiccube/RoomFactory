@@ -1,6 +1,7 @@
 ui_mainmenubar()
 ui_objectpicker()
 ui_layerlist()
+ui_inspector()
 ui_gridsize()
 ui_aboutwindow()
 
@@ -17,27 +18,33 @@ else if keyboard_check_pressed(vk_subtract)
 
 if INPUT_USED_UI
 	exit;
+if window_mouse_get_locked()
+	exit;
 	
 // object selection
 if mouse_check_button_pressed(mb_left)
 {
 	if position_meeting(mouse_x, mouse_y, obj_roomObject)
 	{
-		var inst = instance_position(mouse_x, mouse_y, obj_roomObject)
-		if (inst != -4 && selectedObject != inst && layer_get_name(inst.layer) == currentLayer)
+		var deselect = true
+		var num = instance_position_list(mouse_x, mouse_y, obj_roomObject, tempMeetingList, false)
+		for (var i = 0; i < num; i++)
 		{
-			print("Selected object: ", inst)
-			selectedObject = inst
+			var inst = ds_list_find_value(tempMeetingList, i)
+			if (inst != -4 && layer_get_name(inst.layer) == currentLayer)
+			{
+				selectObject(inst)
+				deselect = false
+				break;
+			}
 		}
+		ds_list_clear(tempMeetingList)
+		
+		if deselect
+			deselectObject()
 	}
 	else
-	{
-		if (selectedObject != undefined)
-		{
-			print("Deselected object: ", selectedObject)
-			selectedObject = undefined
-		}
-	}
+		deselectObject()
 }
 
 // selected object stuff
@@ -48,10 +55,11 @@ if (selectedObject != undefined && instance_exists(selectedObject))
 	// drag
 	if (mouseHovering && mouse_check_button(mb_left) && !draggingObject && !resizingObject)
 	{
-		var dragThreshold = 2
+		var dragThreshold = 1
 		var startResize = false
+		var canResize = selectedObject.canResize
 		
-		if bbox_on_right_edge(mouse_x, mouse_y, selectedObject)
+		if (canResize && bbox_on_right_edge(mouse_x, mouse_y, selectedObject))
 		{
 			if (sign(selectedObject.image_xscale) > 0)
 				resizeDir = resizeType.right
@@ -59,7 +67,7 @@ if (selectedObject != undefined && instance_exists(selectedObject))
 				resizeDir = resizeType.left
 			startResize = true
 		}
-		else if bbox_on_left_edge(mouse_x, mouse_y, selectedObject)
+		else if (canResize && bbox_on_left_edge(mouse_x, mouse_y, selectedObject))
 		{
 			if (sign(selectedObject.image_xscale) > 0)
 				resizeDir = resizeType.left
@@ -67,7 +75,7 @@ if (selectedObject != undefined && instance_exists(selectedObject))
 				resizeDir = resizeType.right
 			startResize = true
 		}
-		else if bbox_on_top_edge(mouse_x, mouse_y, selectedObject)
+		else if (canResize && bbox_on_top_edge(mouse_x, mouse_y, selectedObject))
 		{
 			if (sign(selectedObject.image_yscale) > 0)
 				resizeDir = resizeType.top
@@ -75,7 +83,7 @@ if (selectedObject != undefined && instance_exists(selectedObject))
 				resizeDir = resizeType.bottom
 			startResize = true
 		}
-		else if bbox_on_bottom_edge(mouse_x, mouse_y, selectedObject)
+		else if (canResize && bbox_on_bottom_edge(mouse_x, mouse_y, selectedObject))
 		{
 			if (sign(selectedObject.image_yscale) > 0)
 				resizeDir = resizeType.bottom
@@ -85,23 +93,26 @@ if (selectedObject != undefined && instance_exists(selectedObject))
 		}
 		else if (abs(window_mouse_get_delta_x()) >= dragThreshold || abs(window_mouse_get_delta_y()) >= dragThreshold)
 		{
-			dragX = mouse_x - selectedObject.x
-			dragY = mouse_y - selectedObject.y
+			dragPos.x = mouse_x - selectedObject.x
+			dragPos.y = mouse_y - selectedObject.y
 			draggingObject = true
 		}
 			
 		if startResize
 		{
-			resizeInitialWidth = sprite_get_width(selectedObject.sprite_index)
-			resizeInitialHeight = sprite_get_height(selectedObject.sprite_index)
-			resizeSavedPos = [selectedObject.x, selectedObject.y]
-			resizeSavedScale = [selectedObject.image_xscale, selectedObject.image_yscale]
-			resizeSavedBBox = [
-				selectedObject.bbox_left,
-				selectedObject.bbox_right,
-				selectedObject.bbox_top,
-				selectedObject.bbox_bottom
-			]
+			resizeInitialSize.set(sprite_get_width(selectedObject.sprite_index),
+								sprite_get_height(selectedObject.sprite_index))
+			
+			resizeSpriteOffset.set(sprite_get_xoffset(selectedObject.sprite_index),
+								sprite_get_yoffset(selectedObject.sprite_index))
+			
+			resizeSavedPos.set(selectedObject.x, selectedObject.y)
+			resizeSavedOffset.set(selectedObject.sprite_xoffset, selectedObject.sprite_yoffset)
+			resizeSavedScale.set(selectedObject.image_xscale, selectedObject.image_yscale)
+			resizeSavedBBox.set(selectedObject.bbox_left,
+								selectedObject.bbox_top,
+								selectedObject.bbox_right,
+								selectedObject.bbox_bottom)
 			
 			resizingObject = true
 		}
@@ -111,8 +122,8 @@ if (selectedObject != undefined && instance_exists(selectedObject))
 	{
 		with (selectedObject)
 		{
-			x = mouse_x - other.dragX
-			y = mouse_y - other.dragY
+			x = mouse_x - other.dragPos.x
+			y = mouse_y - other.dragPos.y
 			image_alpha = 0.85
 		}
 		
@@ -139,89 +150,88 @@ if (selectedObject != undefined && instance_exists(selectedObject))
 		switch resizeDir
 		{
 			case resizeType.right:
-				var leftBBox = resizeSavedBBox[0]
-				if (resizeSavedScale[0] < 0)
-					leftBBox = resizeSavedBBox[1]
+				var leftBBox = resizeSavedBBox.x1
+				if (resizeSavedScale.x < 0)
+					leftBBox = resizeSavedBBox.x2
 			
-				var initialSize = resizeInitialWidth
+				var initialSize = resizeInitialSize.x
 				var newSize = x - leftBBox
-				var nx = resizeSavedPos[0]
 				
 				var scale = newSize / initialSize
-				if (sign(scale) == -sign(resizeSavedScale[0]))
+				var nx = resizeSavedPos.x
+				if (sign(scale) == -sign(resizeSavedScale.x))
 				{
-					nx += resizeInitialWidth * sign(resizeSavedScale[0])
+					nx += initialSize * sign(resizeSavedScale.x)
 					scale += sign(scale)
 				}
 				if (scale == 0)
 				{
-					nx += resizeInitialWidth * sign(resizeSavedScale[0])
-					scale = -1 * sign(resizeSavedScale[0])
+					nx += initialSize * sign(resizeSavedScale.x)
+					scale = -1 * sign(resizeSavedScale.x)
 				}
 				
-				window_set_cursor(cr_size_we)
+				if (resizeSavedScale.x != scale)
+					nx += resizeSpriteOffset.x * (scale - 1)
+				
 				selectedObject.x = nx
 				selectedObject.image_xscale = scale
 				break
 			case resizeType.left:
-				var leftBBox = resizeSavedBBox[0]
-				if (resizeSavedScale[0] < 0)
-					leftBBox = resizeSavedBBox[1]
+				var leftBBox = resizeSavedBBox.x1
+				if (resizeSavedScale.x < 0)
+					leftBBox = resizeSavedBBox.x2
 			
-				var initialSize = resizeInitialWidth
+				var initialSize = resizeInitialSize.x
 				var newSize = x - leftBBox
 				var scale = newSize / initialSize
 				
-				var nx = resizeSavedPos[0] + (resizeInitialWidth * scale)
-				var nxscale = resizeSavedScale[0] - scale
-				if (sign(nxscale) == -sign(resizeSavedScale[0]) || nxscale == 0)
+				var nx = resizeSavedPos.x + (initialSize * scale)
+				var nxscale = resizeSavedScale.x - scale
+				if (sign(nxscale) == -sign(resizeSavedScale.x) || nxscale == 0)
 					nxscale -= sign(scale)
 				
-				window_set_cursor(cr_size_we)
 				selectedObject.x = nx
 				selectedObject.image_xscale = nxscale
 				break
 			
 			case resizeType.top:
-				var topBBox = resizeSavedBBox[2]
-				if (resizeSavedScale[1] < 0)
-					topBBox = resizeSavedBBox[3]
+				var topBBox = resizeSavedBBox.y1
+				if (resizeSavedScale.y < 0)
+					topBBox = resizeSavedBBox.y2
 			
-				var initialSize = resizeInitialHeight
+				var initialSize = resizeInitialSize.y
 				var newSize = y - topBBox
 				var scale = newSize / initialSize
 				
-				var ny = resizeSavedPos[1] + (resizeInitialHeight * scale)
-				var nyscale = resizeSavedScale[1] - scale
-				if (sign(nyscale) == -sign(resizeSavedScale[1]) || nyscale == 0)
+				var ny = resizeSavedPos.y + (initialSize * scale)
+				var nyscale = resizeSavedScale.y - scale
+				if (sign(nyscale) == -sign(resizeSavedScale.y) || nyscale == 0)
 					nyscale -= sign(scale)
 				
-				window_set_cursor(cr_size_ns)
 				selectedObject.y = ny
 				selectedObject.image_yscale = nyscale
 				break
 			case resizeType.bottom:
-				var topBBox = resizeSavedBBox[2]
-				if (resizeSavedScale[1] < 0)
-					topBBox = resizeSavedBBox[3]
+				var topBBox = resizeSavedBBox.y1
+				if (resizeSavedScale.y < 0)
+					topBBox = resizeSavedBBox.y2
 			
-				var initialSize = resizeInitialHeight
+				var initialSize = resizeInitialSize.y
 				var newSize = y - topBBox
-				var ny = resizeSavedPos[1]
+				var ny = resizeSavedPos.y
 				
 				var scale = newSize / initialSize
-				if (sign(scale) == -sign(resizeSavedScale[1]))
+				if (sign(scale) == -sign(resizeSavedScale.y))
 				{
-					ny += resizeInitialHeight * sign(resizeSavedScale[1])
+					ny += initialSize * sign(resizeSavedScale.y)
 					scale += sign(scale)
 				}
 				if (scale == 0)
 				{
-					ny += resizeInitialHeight * sign(resizeSavedScale[1])
-					scale = -1 * sign(resizeSavedScale[1])
+					ny += initialSize * sign(resizeSavedScale.y)
+					scale = -1 * sign(resizeSavedScale.y)
 				}
 				
-				window_set_cursor(cr_size_ns)
 				selectedObject.y = ny
 				selectedObject.image_yscale = scale
 				break
@@ -239,7 +249,7 @@ if (selectedObject != undefined && instance_exists(selectedObject))
 		if keyboard_check_pressed(vk_delete)
 		{
 			instance_destroy(selectedObject)
-			selectedObject = undefined
+			deselectObject()
 		}
 	}
 }

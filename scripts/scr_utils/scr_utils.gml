@@ -1,3 +1,6 @@
+globalvar tempMeetingList;
+tempMeetingList = ds_list_create()
+
 function print()
 {
 	var _string = ""

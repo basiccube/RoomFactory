@@ -10,14 +10,14 @@ if (keyboard_check_pressed(vk_space) && !mouseDrag)
 	window_mouse_set_locked(true)
 	mouseDrag = true
 	
-	mouseDragX = window_mouse_get_delta_x()
-	mouseDragY = window_mouse_get_delta_y()
+	mouseDragPos.x = window_mouse_get_delta_x()
+	mouseDragPos.y = window_mouse_get_delta_y()
 }
 
 if mouseDrag
 {
-	cx -= mouseDragX
-	cy -= mouseDragY
+	cx -= mouseDragPos.x
+	cy -= mouseDragPos.y
 	
 	if !keyboard_check(vk_space)
 	{

@@ -22,14 +22,20 @@ function config_load(name)
 	var str = file_text_read_all(path)
 	var json = json_parse(str)
 	
-	if (json.version != CONFIG_VERSION)
+	if !struct_exists(json, "rf_configversion")
 	{
-		print("Invalid config version: expected ", CONFIG_VERSION, ", got ", json.version)
+		print("Invalid config, no config format version found")
+		return false;
+	}
+	
+	if (json.rf_configversion != CONFIG_VERSION)
+	{
+		print("Invalid config version: expected ", CONFIG_VERSION, ", got ", json.rf_configversion)
 		return false;
 	}
 	
 	global.config = json
-	print($"Loaded config {json.name}, version {json.version}")
+	print($"Loaded config {json.name} version {json.version}, format version {json.rf_configversion}")
 	
 	obj_mainUI.currentLayer = config_find_instance_layer().name
 	return true;
@@ -176,7 +182,15 @@ function config_get_objects()
 		return undefined;
 	}
 	
-	return lay[$ "objects"];
+	return config_get_layer_objects(lay[$ "objects"]);
+}
+
+function config_get_layer_objects(objects)
+{
+	if is_string(objects)
+		return global.config[$ objects];
+		
+	return objects;
 }
 
 ///@param {String} name
@@ -219,9 +233,10 @@ function config_get_objectdata(name, layname)
 		return undefined;
 	}
 	
-	for (var i = 0, n = array_length(lay.objects); i < n; i++)
+	var objects = config_get_layer_objects(lay.objects)
+	for (var i = 0, n = array_length(objects); i < n; i++)
 	{
-		var cat = lay.objects[i]
+		var cat = objects[i]
 		for (var j = 0, m = array_length(cat.objects); j < m; j++)
 		{
 			var obj = cat.objects[j]
@@ -265,6 +280,14 @@ function config_get_objectdata_sprite(objectData)
 	
 	print("Adding sprite for ", objectData[$ "id"])
 	var s = sprite_add(objectData[$ "sprite"], 1, false, false, offX, offY)
+	
+	if struct_exists(objectData, "spriteBBox")
+	{
+		var bbox = objectData[$ "spriteBBox"]
+		sprite_set_bbox_mode(s, bboxmode_manual)
+		sprite_set_bbox(s, bbox[0], bbox[1], bbox[2], bbox[3])
+	}
+	
 	ds_map_set(global.configSprites, objectData[$ "id"], s)
 	return s;
 }

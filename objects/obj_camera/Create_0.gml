@@ -32,5 +32,4 @@ cameraInit()
 centerCamera()
 
 mouseDrag = false
-mouseDragX = 0
-mouseDragY = 0
+mouseDragPos = new Vector2(0, 0)

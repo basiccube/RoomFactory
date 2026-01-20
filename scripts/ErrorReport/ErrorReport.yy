@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"ErrorReport",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ErrorReport",
+  "parent":{
+    "name":"GML-OOP",
+    "path":"folders/GML-OOP.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

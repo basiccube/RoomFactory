@@ -18,7 +18,8 @@ function save_room(path = undefined)
 	
 	var rm = {}
 	
-	rm.version = ROOM_VERSION
+	rm.version = ++obj_roomManager.version
+	rm.rf_roomversion = ROOM_VERSION
 	rm.rf_version = GM_version
 	
 	rm.roomInfo = obj_roomManager.roomInfo
@@ -92,13 +93,20 @@ function load_room(path)
 	var str = file_text_read_all(path)
 	var json = json_parse(str)
 	
-	if (json.version != ROOM_VERSION)
+	if !struct_exists(json, "rf_roomversion")
 	{
-		print("Incorrect room version: expected", ROOM_VERSION, ", got ", json.version)
+		print("Invalid room, no room format version found")
+		return false;
+	}
+	
+	if (json.rf_roomversion != ROOM_VERSION)
+	{
+		print("Incorrect room version: expected ", ROOM_VERSION, ", got ", json.rf_roomversion)
 		return false;
 	}
 	
 	obj_roomManager.roomInfo = json.roomInfo
+	obj_roomManager.version = json.version
 	
 	for (var i = 0, n = array_length(json.layers); i < n; i++)
 	{
@@ -114,12 +122,18 @@ function load_room(path)
 			{
 				objectID = inst.id
 				
-				sprite_index = config_get_object_sprite(objectID)
-				if is_undefined(sprite_index)
-				{
-					var objdata = config_get_objectdata(objectID, lay.name)
-					sprite_index = config_get_objectdata_sprite(objdata)
-				}
+				var objdata = config_get_objectdata(objectID, lay.name)
+				if struct_exists(objdata, "allowResize")
+					canResize = objdata.allowResize
+				
+				var spr = config_get_object_sprite(objectID)
+				if is_undefined(spr)
+					spr = config_get_objectdata_sprite(objdata)
+				
+				if !is_undefined(spr)
+					sprite_index = spr
+				else
+					print("No sprite for object ", objectID)
 				
 				image_xscale = inst.xscale
 				image_yscale = inst.yscale
@@ -134,12 +148,15 @@ function load_room(path)
 function clear_room()
 {
 	global.roomPath = undefined
+	obj_mainUI.deselectObject()
 	
 	with (obj_roomManager.roomInfo)
 	{
 		width = global.config.roomDefaults.width
 		height = global.config.roomDefaults.height
+		title = "Room Title"
 	}
+	obj_roomManager.version = 0
 	
 	for (var i = 0, n = array_length(global.config[$ "layers"]); i < n; i++)
 	{
