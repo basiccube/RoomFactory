@@ -13,12 +13,6 @@ if mouse_check_button_released(mb_left)
 	if !layer_exists(layerName)
 		layer_create(layinfo.depth, layerName)
 	
-	with (instance_create_layer(x, y, layerName, obj_roomObject))
-	{
-		objectID = other.objectData.id
-		if struct_exists(other.objectData, "allowResize")
-			canResize = other.objectData.allowResize
-		sprite_index = config_get_objectdata_sprite(other.objectData)
-	}
+	create_room_object(x, y, layerName, objectData)
 	instance_destroy()
 }

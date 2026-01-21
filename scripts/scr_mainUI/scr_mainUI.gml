@@ -70,8 +70,6 @@ function ui_aboutwindow()
 	ImGui.End()
 }
 
-#macro OBJECTPICKER_MAX_ROW 6
-
 function ui_objectpicker()
 {
 	if !config_loaded()
@@ -90,36 +88,44 @@ function ui_objectpicker()
 	{
 		ImGui.Text("Object Picker")
 		ImGui.Separator()
-	
-		var objects = config_get_objects()
-		for (var i = 0, n = array_length(objects); i < n; i++)
+		
+		if ImGui.BeginTabBar("Object Categories")
 		{
-			var cat = objects[i]
-			ImGui.Text(cat.name)
-			ImGui.Separator()
-			
-			for (var j = 0, m = array_length(cat.objects); j < m; j++)
+			var objects = config_get_objects()
+			for (var i = 0, n = array_length(objects); i < n; i++)
 			{
-				var obj = cat.objects[j]
-				var spr = config_get_objectdata_sprite(obj)
-				if (spr != undefined)
+				var cat = objects[i]
+				if ImGui.BeginTabItem(cat.name)
 				{
-					if (j > 0 && (j % OBJECTPICKER_MAX_ROW) != 0)
-						ImGui.SameLine()
-					
-					if ImGui.ImageButton(obj.name, spr, 0, c_white, 1, c_white, 0)
+					if ImGui.BeginListBox(concat("##", cat.name, " list"), 304, 256)
 					{
-						with (instance_create_depth(mouse_x, mouse_y, -10, obj_objectPlacer))
+						for (var j = 0, m = array_length(cat.objects); j < m; j++)
 						{
-							objectData = obj
-							layerName = other.currentLayer
+							var obj = cat.objects[j]
+							var spr = config_get_objectdata_sprite(obj)
+							
+							ImGui.Image(spr, 0, c_white, 1, 32, 32)
+							ImGui.SameLine()
+							if ImGui.Selectable(obj.name, false, ImGuiSelectableFlags.None, 0, 32)
+							{
+								with (instance_create_depth(mouse_x, mouse_y, -10, obj_objectPlacer))
+								{
+									objectData = obj
+									layerName = other.currentLayer
+								}
+							}
+							
+							if ImGui.IsItemHovered(ImGuiHoveredFlags.ForTooltip)
+								ImGui.SetTooltip(obj.name)
 						}
+						ImGui.EndListBox()
 					}
 					
-					if ImGui.IsItemHovered(ImGuiHoveredFlags.ForTooltip)
-						ImGui.SetTooltip(obj.name)
+					ImGui.EndTabItem()
 				}
 			}
+			
+			ImGui.EndTabBar()
 		}
 	
 		ImGui.End()
@@ -168,6 +174,12 @@ function ui_layerlist()
 	}
 }
 
+#macro VARTYPE_BOOL "bool"
+#macro VARTYPE_NUMBER "number"
+#macro VARTYPE_STRING "string"
+
+global.varTypes = [VARTYPE_BOOL, VARTYPE_NUMBER, VARTYPE_STRING]
+
 function ui_inspector()
 {
 	if !config_loaded()
@@ -206,14 +218,14 @@ function ui_inspector()
 			{
 				ImGui.Text("Scale")
 				
-				var oxscale = ImGui.InputFloat("H", selectedObject.image_xscale, 0.25, 1)
+				var oxscale = ImGui.InputFloat("X##Scale", selectedObject.image_xscale, 0.25, 1)
 				selectedObject.image_xscale = oxscale
 				
-				var oyscale = ImGui.InputFloat("V", selectedObject.image_yscale, 0.25, 1)
+				var oyscale = ImGui.InputFloat("Y##Scale", selectedObject.image_yscale, 0.25, 1)
 				selectedObject.image_yscale = oyscale
-				
-				ImGui.NewLine()
 			}
+			
+			ImGui.Separator()
 			
 			ImGui.Text("Variables")
 			
@@ -224,13 +236,102 @@ function ui_inspector()
 					var variable = selectedObject.variables[i]
 					var name = variable[0]
 					var value = variable[1]
+					var type = variable[2]
 					
-					ImGui.Text(concat(name, " = ", value))
+					ImGui.Text(concat(name, " = ", value, " ( ", type, " )"))
 					
 					ImGui.SameLine()
 					if ImGui.Button("Edit##" + string(i))
 					{
-						print("imagine the window for that...")
+						selectedVariableIndex = i
+						ImGui.OpenPopup("varPopup##" + string(i))
+					}
+					
+					// object variable popup
+					ImGui.SetNextWindowPos(room_width / 2, room_height / 2, ImGuiCond.Always, 0.5, 0.5)
+					if ImGui.BeginPopup("varPopup##" + string(i))
+					{
+						if (selectedObject != undefined)
+						{
+							var ovar = selectedObject.variables[selectedVariableIndex]
+							var vname = ovar[0]
+							var vval = ovar[1]
+							var vtype = ovar[2]
+							
+							var nname = ImGui.InputText("Name", vname)
+							ovar[0] = nname
+							
+							switch vtype
+							{
+								case VARTYPE_BOOL:
+									var nval = ImGui.Checkbox("Enabled", vval)
+									ovar[1] = nval
+									break
+									
+								case VARTYPE_NUMBER:
+									var nval = ImGui.InputFloat("Value", vval, 1, 2)
+									ovar[1] = nval
+									break
+									
+								case VARTYPE_STRING:
+									var nval = ImGui.InputText("Value", vval)
+									ovar[1] = nval
+									break
+							}
+							
+							ImGui.Separator()
+							if ImGui.BeginCombo("Type", vtype, 0)
+							{
+								for (var j = 0, m = array_length(global.varTypes); j < m; j++)
+								{
+									var arrtype = global.varTypes[j]
+									var arrselected = (vtype == arrtype)
+									
+									if ImGui.Selectable(arrtype, arrselected)
+									{
+										// try to convert the current value to the new type
+										switch arrtype
+										{
+											case VARTYPE_BOOL:
+												if is_string(vval)
+												{
+													vval = string_digits(vval)
+													if (vval == "")
+														vval = 0
+													else
+														vval = real(vval)
+												}
+												vval = bool(vval)
+												break
+											case VARTYPE_NUMBER:
+												if is_string(vval)
+												{
+													vval = string_digits(vval)
+													if (vval == "")
+														vval = 0
+												}
+												vval = real(vval)
+												break
+											case VARTYPE_STRING:
+												vval = string(vval)
+												break
+										}
+										
+										ovar[1] = vval
+										ovar[2] = arrtype
+									}
+									
+									if arrselected
+										ImGui.SetItemDefaultFocus()
+								}
+								ImGui.EndCombo()
+							}
+							ImGui.NewLine()
+							
+							if ImGui.Button("OK")
+								ImGui.CloseCurrentPopup()
+						}
+						ImGui.EndPopup()
 					}
 					
 					ImGui.SameLine()
@@ -244,7 +345,11 @@ function ui_inspector()
 				
 				if ImGui.Button("+", 20, 20)
 				{
-					print("not done yet")
+					var len = array_length(selectedObject.variables)
+					array_push(selectedObject.variables, ["varname" + string(len + 1), false, VARTYPE_BOOL])
+					
+					selectedVariableIndex = len
+					ImGui.OpenPopup("varPopup##" + string(selectedVariableIndex))
 				}
 				ImGui.EndListBox()
 			}
@@ -272,6 +377,8 @@ function ui_inspector()
 		
 			var title = ImGui.InputText("Title", obj_roomManager.roomInfo.title)
 			obj_roomManager.roomInfo.title = title
+			
+			ImGui.Separator()
 		
 			var width = ImGui.DragInt("Width", obj_roomManager.roomInfo.width)
 			obj_roomManager.roomInfo.width = max(width, global.config.roomDefaults.width)

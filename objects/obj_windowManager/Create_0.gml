@@ -1,7 +1,7 @@
 #macro ROOMFACTORY_SETTINGS_FILE "RoomFactory.json"
 
-window_set_min_width(300)
-window_set_min_height(200)
+window_set_min_width(680)
+window_set_min_height(580)
 
 // read settings
 if file_exists("RoomFactory.json")

@@ -30,7 +30,7 @@ function config_load(name)
 	
 	if (json.rf_configversion != CONFIG_VERSION)
 	{
-		print("Invalid config version: expected ", CONFIG_VERSION, ", got ", json.rf_configversion)
+		print($"Invalid config version, expected {CONFIG_VERSION}, got {json.rf_configversion}")
 		return false;
 	}
 	
@@ -290,4 +290,27 @@ function config_get_objectdata_sprite(objectData)
 	
 	ds_map_set(global.configSprites, objectData[$ "id"], s)
 	return s;
+}
+
+///@param {Real} x
+///@param {Real} y
+///@param {String, ID.Layer} layer
+///@param {Struct} objectData
+function create_room_object(ox, oy, olayer, odata)
+{
+	var oid = undefined
+	with (instance_create_layer(ox, oy, olayer, obj_roomObject))
+	{
+		oid = id
+		objectID = odata.id
+		
+		if struct_exists(odata, "variables")
+			variables = variable_clone(odata.variables)
+		if struct_exists(odata, "allowResize")
+			canResize = odata.allowResize
+		
+		sprite_index = config_get_objectdata_sprite(odata)
+	}
+	
+	return oid;
 }

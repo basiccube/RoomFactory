@@ -54,7 +54,8 @@ function save_room(path = undefined)
 						x : inst.x,
 						y : inst.y,
 						xscale : inst.image_xscale,
-						yscale : inst.image_yscale
+						yscale : inst.image_yscale,
+						variables : inst.variables
 					}
 					
 					array_push(lay.instances, instdata)
@@ -101,7 +102,8 @@ function load_room(path)
 	
 	if (json.rf_roomversion != ROOM_VERSION)
 	{
-		print("Incorrect room version: expected ", ROOM_VERSION, ", got ", json.rf_roomversion)
+		
+		print($"Incorrect room version: expected {ROOM_VERSION}, got {json.rf_roomversion}")
 		return false;
 	}
 	
@@ -118,23 +120,10 @@ function load_room(path)
 		for (var j = 0, m = array_length(lay.instances); j < m; j++)
 		{
 			var inst = lay.instances[j]
-			with (instance_create_layer(inst.x, inst.y, layID, obj_roomObject))
+			var objdata = config_get_objectdata(inst.id, lay.name)
+			
+			with (create_room_object(inst.x, inst.y, layID, objdata))
 			{
-				objectID = inst.id
-				
-				var objdata = config_get_objectdata(objectID, lay.name)
-				if struct_exists(objdata, "allowResize")
-					canResize = objdata.allowResize
-				
-				var spr = config_get_object_sprite(objectID)
-				if is_undefined(spr)
-					spr = config_get_objectdata_sprite(objdata)
-				
-				if !is_undefined(spr)
-					sprite_index = spr
-				else
-					print("No sprite for object ", objectID)
-				
 				image_xscale = inst.xscale
 				image_yscale = inst.yscale
 			}

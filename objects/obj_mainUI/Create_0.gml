@@ -29,6 +29,7 @@ gridMinSize = 4
 gridIncrement = 4
 
 selectedObject = undefined
+selectedVariableIndex = 0
 draggingObject = false
 dragPos = new Vector2(0, 0)
 
