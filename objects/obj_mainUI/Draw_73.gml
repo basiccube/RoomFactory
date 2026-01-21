@@ -1,5 +1,7 @@
 with (instance_position(mouse_x, mouse_y, obj_roomObject))
 {
+	if instance_exists(obj_objectPlacer)
+		break;
 	if (layer_get_name(layer) != other.currentLayer)
 		break;
 	if (INPUT_USED_UI || window_mouse_get_locked())

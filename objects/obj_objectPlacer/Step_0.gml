@@ -16,3 +16,5 @@ if mouse_check_button_released(mb_left)
 	create_room_object(x, y, layerName, objectData)
 	instance_destroy()
 }
+else if mouse_check_button_released(mb_right)
+	instance_destroy()

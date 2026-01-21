@@ -102,7 +102,6 @@ function load_room(path)
 	
 	if (json.rf_roomversion != ROOM_VERSION)
 	{
-		
 		print($"Incorrect room version: expected {ROOM_VERSION}, got {json.rf_roomversion}")
 		return false;
 	}
@@ -124,6 +123,7 @@ function load_room(path)
 			
 			with (create_room_object(inst.x, inst.y, layID, objdata))
 			{
+				variables = variable_clone(inst.variables)
 				image_xscale = inst.xscale
 				image_yscale = inst.yscale
 			}

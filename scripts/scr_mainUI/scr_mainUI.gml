@@ -78,6 +78,7 @@ function ui_objectpicker()
 		exit;
 	
 	ImGui.SetNextWindowPos(10, 32, ImGuiCond.Always)
+	ImGui.SetNextWindowSizeConstraints(0, 0, 256, 340)
 	var window_flags = ImGuiWindowFlags.NoDecoration |
 					ImGuiWindowFlags.AlwaysAutoResize |
 					ImGuiWindowFlags.NoSavedSettings |
@@ -89,7 +90,7 @@ function ui_objectpicker()
 		ImGui.Text("Object Picker")
 		ImGui.Separator()
 		
-		if ImGui.BeginTabBar("Object Categories")
+		if ImGui.BeginTabBar("Object Categories", ImGuiTabBarFlags.TabListPopupButton | ImGuiTabBarFlags.FittingPolicyScroll)
 		{
 			var objects = config_get_objects()
 			for (var i = 0, n = array_length(objects); i < n; i++)
@@ -97,7 +98,7 @@ function ui_objectpicker()
 				var cat = objects[i]
 				if ImGui.BeginTabItem(cat.name)
 				{
-					if ImGui.BeginListBox(concat("##", cat.name, " list"), 304, 256)
+					if ImGui.BeginListBox(concat("##", cat.name, " list"), 238, 256)
 					{
 						for (var j = 0, m = array_length(cat.objects); j < m; j++)
 						{
@@ -238,16 +239,31 @@ function ui_inspector()
 					var value = variable[1]
 					var type = variable[2]
 					
-					ImGui.Text(concat(name, " = ", value, " ( ", type, " )"))
+					if ImGui.Selectable(concat(name, " = ", value, " ( ", type, " )"))
+						ImGui.OpenPopup("varMenuPopup##" + string(i))
 					
-					ImGui.SameLine()
-					if ImGui.Button("Edit##" + string(i))
+					// object variable popup menu
+					var openEditPopup = false
+					if ImGui.BeginPopupContextItem("varMenuPopup##" + string(i))
 					{
-						selectedVariableIndex = i
-						ImGui.OpenPopup("varPopup##" + string(i))
+						if ImGui.Selectable("Edit##" + string(i))
+						{
+							selectedVariableIndex = i
+							openEditPopup = true
+						}
+						if ImGui.Selectable("Delete##" + string(i))
+						{
+							array_delete(selectedObject.variables, i, 1)
+							i--
+							n--
+						}
+						ImGui.EndPopup()
 					}
 					
-					// object variable popup
+					if openEditPopup
+						ImGui.OpenPopup("varPopup##" + string(i))
+					
+					// object variable edit popup
 					ImGui.SetNextWindowPos(room_width / 2, room_height / 2, ImGuiCond.Always, 0.5, 0.5)
 					if ImGui.BeginPopup("varPopup##" + string(i))
 					{
@@ -328,18 +344,10 @@ function ui_inspector()
 							}
 							ImGui.NewLine()
 							
-							if ImGui.Button("OK")
+							if ImGui.Button("OK", 64, 24)
 								ImGui.CloseCurrentPopup()
 						}
 						ImGui.EndPopup()
-					}
-					
-					ImGui.SameLine()
-					if ImGui.Button("Delete##" + string(i))
-					{
-						array_delete(selectedObject.variables, i, 1)
-						i--
-						n--
 					}
 				}
 				
