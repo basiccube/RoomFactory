@@ -1,5 +1,8 @@
 #macro ROOM_VERSION 1
-#macro ROOM_FILTER "Room Factory room|*.rfrm"
+#macro ROOM_EXTENSION ".rfrm"
+#macro ROOM_EXTENSION_CYOP ".json"
+#macro ROOM_FILTER "Room Factory room (*.rfrm)|*.rfrm"
+#macro ROOM_FILTER_CYOP "CYOP room (*.json)|*.json"
 global.roomPath = undefined
 
 ///@param {String} path
@@ -7,15 +10,32 @@ function save_room(path = undefined)
 {
 	if (is_undefined(path) || path == "")
 	{
-		path = get_save_filename_ext(ROOM_FILTER,
-									"room.rfrm",
+		var filter = config_get_file_filter()
+		path = get_save_filename_ext(filter[0],
+									concat("room", filter[1]),
 									working_directory,
 									"Save Room")
 	}
 	
+	if (path == "")
+		return false;
+	
 	global.roomPath = path
 	print("Saving room to ", path)
+	var rm = save_room_rf()
 	
+	var file = file_text_open_write(path)
+	file_text_write_string(file, json_stringify(rm, true))
+	file_text_close(file)
+	
+	print("Finished saving room")
+	update_titlebar()
+	
+	return true;
+}
+
+function save_room_rf()
+{
 	var rm = {}
 	
 	rm.version = ++obj_roomManager.version
@@ -62,7 +82,7 @@ function save_room(path = undefined)
 					break
 					
 				default:
-					print("Unsupported layer element: ", layer_get_element_type(element))
+					print("Unsupported layer element : ", layer_get_element_type(element))
 			}
 		}
 		
@@ -70,12 +90,7 @@ function save_room(path = undefined)
 	}
 	rm.layers = layers
 	
-	var file = file_text_open_write(path)
-	file_text_write_string(file, json_stringify(rm, true))
-	file_text_close(file)
-	
-	print("Finished saving room")
-	update_titlebar()
+	return rm;
 }
 
 ///@param {String} path
@@ -83,7 +98,7 @@ function load_room(path)
 {
 	if !file_exists(path)
 	{
-		print("File doesn't exist: ", path)
+		print("File doesn't exist : ", path)
 		return false;
 	}
 	
@@ -94,6 +109,20 @@ function load_room(path)
 	var str = file_text_read_all(path)
 	var json = json_parse(str)
 	
+	if !load_room_rf(json)
+	{
+		print("Failed to load room : ", path)
+		return false;
+	}
+	
+	print("Room loaded")
+	update_titlebar()
+	
+	return true;
+}
+
+function load_room_rf(json)
+{
 	if !struct_exists(json, "rf_roomversion")
 	{
 		print("Invalid room, no room format version found")
@@ -102,7 +131,7 @@ function load_room(path)
 	
 	if (json.rf_roomversion != ROOM_VERSION)
 	{
-		print($"Incorrect room version: expected {ROOM_VERSION}, got {json.rf_roomversion}")
+		print($"Incorrect room version : expected {ROOM_VERSION}, got {json.rf_roomversion}")
 		return false;
 	}
 	
@@ -120,6 +149,8 @@ function load_room(path)
 		{
 			var inst = lay.instances[j]
 			var objdata = config_get_objectdata(inst.id, lay.name)
+			if is_undefined(objdata)
+				continue;
 			
 			with (create_room_object(inst.x, inst.y, layID, objdata))
 			{
@@ -130,14 +161,17 @@ function load_room(path)
 		}
 	}
 	
-	print("Room loaded")
-	update_titlebar()
+	return true;
 }
 
 function clear_room()
 {
 	global.roomPath = undefined
 	obj_mainUI.deselectObject()
+	
+	obj_mainUI.gridSize = 16
+	if struct_exists(global.config.roomDefaults, "gridSize")
+		obj_mainUI.gridSize = global.config.roomDefaults.gridSize
 	
 	with (obj_roomManager.roomInfo)
 	{
@@ -146,17 +180,10 @@ function clear_room()
 		title = "Room Title"
 	}
 	obj_roomManager.version = 0
+	obj_camera.centerCamera()
 	
-	for (var i = 0, n = array_length(global.config[$ "layers"]); i < n; i++)
-	{
-		var layinfo = global.config[$ "layers"][i]
-		if !layer_exists(layinfo.name)
-			continue;
-			
-		var lay = layer_get_id(layinfo.name)
-		layer_destroy_instances(lay)
-		layer_destroy(lay)
-	}
+	config_delete_layers()
+	config_create_layers()
 	
 	print("Cleared room")
 	update_titlebar()

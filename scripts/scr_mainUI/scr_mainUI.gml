@@ -1,3 +1,6 @@
+#macro BUTTON_WIDTH 80
+#macro BUTTON_HEIGHT 24
+
 function ui_mainmenubar()
 {
 	ImGui.BeginMainMenuBar()
@@ -10,16 +13,44 @@ function ui_mainmenubar()
 		
 		if ImGui.MenuItem("Open")
 		{
-			var p = get_open_filename(ROOM_FILTER, "")
+			var filter = config_get_file_filter()
+			var p = get_open_filename(filter[0], "")
 			if (p != "")
+			{
 				load_room(p)
+				recents_push(p)
+			}
 		}
+		
+		if ImGui.BeginMenu("Recent")
+		{
+			for (var i = 0; i < MAX_RECENTS; i++)
+			{
+				var recent = global.recents[i]
+				if is_undefined(recent)
+					continue;
+				
+				if ImGui.MenuItem(recent)
+				{
+					load_room(recent)
+					recents_push(recent)
+				}
+			}
+			ImGui.EndMenu()
+		}
+		
 		ImGui.Separator()
 		
 		if ImGui.MenuItem("Save")
+		{
 			save_room(global.roomPath)
+			recents_push(global.roomPath)
+		}
 		if ImGui.MenuItem("Save As...")
+		{
 			save_room()
+			recents_push(global.roomPath)
+		}
 		
 		ImGui.Separator()
 		if ImGui.MenuItem("Quit")
@@ -28,15 +59,28 @@ function ui_mainmenubar()
 		ImGui.EndMenu()
 	}
 	
+	if ImGui.BeginMenu("Windows")
+	{
+		if ImGui.MenuItem("Object Picker", undefined, windows.objectpicker)
+			windows.objectpicker = !windows.objectpicker
+		if ImGui.MenuItem("Layer List", undefined, windows.layerlist)
+			windows.layerlist = !windows.layerlist
+		if ImGui.MenuItem("Inspector", undefined, windows.inspector)
+			windows.inspector = !windows.inspector
+		if ImGui.MenuItem("Grid Size", undefined, windows.gridsize)
+			windows.gridsize = !windows.gridsize
+		ImGui.EndMenu()
+	}
+	
 	if ImGui.BeginMenu("Help")
 	{
-		if ImGui.MenuItem("Demo Window", undefined, showDemoWindow)
+		if ImGui.MenuItem("ImGui Demo Window", undefined, showDemoWindow)
 			showDemoWindow = !showDemoWindow
-		if ImGui.MenuItem("About ImGui...", undefined, showImGuiAboutWindow)
+		if ImGui.MenuItem("About ImGui...")
 			showImGuiAboutWindow = !showImGuiAboutWindow
 		
 		ImGui.Separator()
-		if ImGui.MenuItem("About Room Factory...", undefined, showAboutWindow)
+		if ImGui.MenuItem("About Room Factory...")
 			showAboutWindow = !showAboutWindow
 		
 		ImGui.EndMenu()
@@ -63,18 +107,55 @@ function ui_aboutwindow()
 		ImGui.Separator()
 		ImGui.Text(concat("Version ", GM_version))
 		
-		if ImGui.Button("OK", 64, 24)
+		if ImGui.Button("OK", BUTTON_WIDTH, BUTTON_HEIGHT)
 			showAboutWindow = false
 	}
 	
 	ImGui.End()
 }
 
+function ui_gridsize()
+{
+	if !windows.gridsize
+		exit;
+	
+	ImGui.SetNextWindowPos(room_width - 10, room_height - 8, ImGuiCond.Always, 1, 1)
+	var window_flags = ImGuiWindowFlags.NoDecoration |
+					ImGuiWindowFlags.AlwaysAutoResize |
+					ImGuiWindowFlags.NoSavedSettings |
+					ImGuiWindowFlags.NoFocusOnAppearing |
+					ImGuiWindowFlags.NoNav
+					
+	if ImGui.Begin("Grid Size", true, window_flags)
+	{
+		ImGui.Text(concat("Grid Size: ", gridSize))
+		
+		ImGui.SameLine()
+		if ImGui.Button("+", 20, 20)
+			grid_increase()
+		
+		ImGui.SameLine()
+		if ImGui.Button("-", 20, 20)
+			grid_decrease()
+			
+		ImGui.SameLine()
+		if ImGui.Button("/", 20, 20)
+			gridSize = 16
+		
+		ImGui.End()
+	}
+}
+
 function ui_objectpicker()
 {
+	if !windows.objectpicker
+		exit;
+	
 	if !config_loaded()
 		exit;
 	if instance_exists(obj_objectPlacer)
+		exit;
+	if (layer_exists(obj_mainUI.currentLayer) && !layer_get_visible(obj_mainUI.currentLayer))
 		exit;
 	
 	ImGui.SetNextWindowPos(10, 32, ImGuiCond.Always)
@@ -103,7 +184,7 @@ function ui_objectpicker()
 						for (var j = 0, m = array_length(cat.objects); j < m; j++)
 						{
 							var obj = cat.objects[j]
-							var spr = config_get_objectdata_sprite(obj)
+							var spr = config_get_object_sprite(obj)
 							
 							ImGui.Image(spr, 0, c_white, 1, 32, 32)
 							ImGui.SameLine()
@@ -135,6 +216,9 @@ function ui_objectpicker()
 
 function ui_layerlist()
 {
+	if !windows.layerlist
+		exit;
+	
 	if !config_loaded()
 		exit;
 	if instance_exists(obj_objectPlacer)
@@ -158,6 +242,16 @@ function ui_layerlist()
 		{
 			for (var i = 0, n = array_length(arr); i < n; i++)
 			{
+				if layer_exists(arr[i].name)
+				{
+					var layVisible = layer_get_visible(arr[i].name)
+					var newVisible = ImGui.Checkbox("##visible" + arr[i].displayName, layVisible)
+					if (newVisible != layVisible)
+						layer_set_visible(arr[i].name, newVisible)
+						
+					ImGui.SameLine()
+				}
+				
 				var selected = (arr[i].name == currentLayer)
 				if ImGui.Selectable(arr[i].displayName, selected)
 				{
@@ -183,6 +277,9 @@ global.varTypes = [VARTYPE_BOOL, VARTYPE_NUMBER, VARTYPE_STRING]
 
 function ui_inspector()
 {
+	if !windows.inspector
+		exit;
+	
 	if !config_loaded()
 		exit;
 	if instance_exists(obj_objectPlacer)
@@ -239,7 +336,23 @@ function ui_inspector()
 					var value = variable[1]
 					var type = variable[2]
 					
-					if ImGui.Selectable(concat(name, " = ", value, " ( ", type, " )"))
+					var listval = value
+					switch type
+					{
+						case VARTYPE_BOOL:
+							listval = value ? "true" : "false"
+							break
+						case VARTYPE_NUMBER:
+							if (frac(abs(value)) <= 0)
+								listval = floor(value)
+							break
+						case VARTYPE_STRING:
+							listval = concat("\"", value, "\"")
+							break
+					}
+					var liststr = concat(name, " = ", listval, " ( ", type, " )")
+					
+					if ImGui.Selectable(liststr)
 						ImGui.OpenPopup("varMenuPopup##" + string(i))
 					
 					// object variable popup menu
@@ -344,7 +457,7 @@ function ui_inspector()
 							}
 							ImGui.NewLine()
 							
-							if ImGui.Button("OK", 64, 24)
+							if ImGui.Button("OK", BUTTON_WIDTH, BUTTON_HEIGHT)
 								ImGui.CloseCurrentPopup()
 						}
 						ImGui.EndPopup()
@@ -364,14 +477,14 @@ function ui_inspector()
 			
 			ImGui.NewLine()
 			
-			if ImGui.Button("Delete")
+			if ImGui.Button("Delete", BUTTON_WIDTH, BUTTON_HEIGHT)
 			{
 				instance_destroy(selectedObject)
 				deselectObject()
 			}
 			
 			ImGui.SameLine()
-			if ImGui.Button("Unselect")
+			if ImGui.Button("Unselect", BUTTON_WIDTH, BUTTON_HEIGHT)
 				deselectObject()
 		}
 		else
@@ -380,23 +493,102 @@ function ui_inspector()
 			var rmstr = "Untitled"
 			if (!is_undefined(global.roomPath) && global.roomPath != "")
 				rmstr = filename_change_ext(filename_name(global.roomPath), "")
+			
 			ImGui.Text(rmstr)
 			ImGui.NewLine()
-		
+			
+			ImGui.SetNextItemWidth(224)
 			var title = ImGui.InputText("Title", obj_roomManager.roomInfo.title)
 			obj_roomManager.roomInfo.title = title
 			
 			ImGui.Separator()
-		
+			
+			ImGui.SetNextItemWidth(224)
 			var width = ImGui.DragInt("Width", obj_roomManager.roomInfo.width)
 			obj_roomManager.roomInfo.width = max(width, global.config.roomDefaults.width)
-		
+			
+			ImGui.SetNextItemWidth(224)
 			var height = ImGui.DragInt("Height", obj_roomManager.roomInfo.height)
 			obj_roomManager.roomInfo.height = max(height, global.config.roomDefaults.height)
 		}
 		
 		ImGui.End()
 	}
+}
+
+function ui_configpicker()
+{
+	if !showConfigPicker
+		exit;
+	
+	ImGui.SetNextWindowPos(room_width / 2, room_height / 2, ImGuiCond.Always, 0.5, 0.5)
+	ImGui.SetNextWindowFocus()
+	
+	var show = ImGui.Begin("Welcome to Room Factory", showConfigPicker, ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoSavedSettings | ImGuiWindowFlags.NoCollapse, ImGuiReturnMask.Both)
+	showConfigPicker = show & ImGuiReturnMask.Pointer
+	
+	if (show & ImGuiReturnMask.Return)
+	{
+		ImGui.Text("Welcome to Room Factory version " + GM_version)
+		ImGui.Separator()
+		
+		ImGui.Text("Select a game configuration:")
+		
+		static searched = false
+		static searcharr = []
+		static selection = 0
+		
+		if !searched
+		{
+			var file = file_find_first(concat(CONFIG_PATH, "*.rfcfg"), fa_none)
+			while (file != "")
+			{
+				var jfile = file_text_read_all(concat(CONFIG_PATH, file))
+				var json = json_parse(jfile)
+				
+				array_push(searcharr, [file, json.name])
+				file = file_find_next()
+			}
+			
+			searched = true
+		}
+		
+		if ImGui.BeginListBox("##Config Listbox", 300, 260)
+		{
+			for (var i = 0, n = array_length(searcharr); i < n; i++)
+			{
+				var conf = searcharr[i]
+				var selected = (selection == i)
+				
+				if ImGui.Selectable(conf[1], selected)
+					selection = i
+					
+				if selected
+					ImGui.SetItemDefaultFocus()
+			}
+			ImGui.EndListBox()
+		}
+		
+		var disabled = (array_length(searcharr) <= 0)
+		if disabled
+			ImGui.BeginDisabled()
+		
+		if ImGui.Button("OK", BUTTON_WIDTH, BUTTON_HEIGHT)
+		{
+			config_load(searcharr[selection][0])
+			clear_room()
+			showConfigPicker = false
+		}
+		
+		if disabled
+			ImGui.EndDisabled()
+		
+		ImGui.SameLine()
+		if ImGui.Button("Quit", BUTTON_WIDTH, BUTTON_HEIGHT)
+			game_end(0)
+	}
+	
+	ImGui.End()
 }
 
 function update_titlebar()

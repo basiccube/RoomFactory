@@ -6,7 +6,8 @@
 	
 	"roomDefaults" : {
 		"width" : 384,
-		"height" : 216
+		"height" : 216,
+		"gridSize" : 16
 	},
 	
 	"fgObjects" : [

@@ -22,6 +22,14 @@ font_enable_sdf(mainFont, true)
 showImGuiAboutWindow = false
 showAboutWindow = false
 showDemoWindow = false
+showConfigPicker = true
+
+windows = {
+	objectpicker : true,
+	layerlist : true,
+	inspector : true,
+	gridsize : true,
+}
 
 gridSize = 16
 gridMaxSize = 32
@@ -45,19 +53,13 @@ resizeSavedBBox = new Vector4(0, 0, 0, 0)
 
 currentLayer = undefined
 update_titlebar()
-
-var p = get_open_filename(CONFIG_FILTER, "")
-if (p != "")
-	config_load(p)
-else
-	game_end(0)
 	
 selectObject = function(inst)
 {
 	if (selectedObject == inst)
 		exit;
 	
-	print("Selected object: ", inst)
+	print("Selected object : ", inst)
 	selectedObject = inst
 }
 	
@@ -65,7 +67,7 @@ deselectObject = function()
 {
 	if (selectedObject != undefined)
 	{
-		print("Deselected object: ", selectedObject)
+		print("Deselected object : ", selectedObject)
 		if instance_exists(selectedObject)
 		{
 			if (selectedObject.image_xscale == 0)
@@ -75,5 +77,18 @@ deselectObject = function()
 		}
 		
 		selectedObject = undefined
+	}
+}
+
+releaseDraggedObject = function()
+{
+	if !draggingObject
+		exit;
+	
+	draggingObject = false
+	with (selectedObject)
+	{
+		image_alpha = 1
+		move_snap(other.gridSize, other.gridSize)
 	}
 }

@@ -44,3 +44,24 @@ function file_text_read_all(file)
 		
     return filestring;
 }
+
+function create_placeholder_sprite(size = 16)
+{
+	var spr = undefined
+	var surf = surface_create(size, size)
+	
+	surface_set_target(surf)
+	draw_clear_alpha(c_black, 0)
+	
+	var p = size / 2
+	var c = make_color_hsv(irandom(255), 255, 255)
+	draw_circle_color(p, p, p, c, c, false)
+	draw_circle(p, p, p, true)
+	
+	surface_reset_target()
+	
+	spr = sprite_create_from_surface(surf, 0, 0, size, size, false, false, 0, 0)
+	surface_free(surf)
+	
+	return spr;
+}

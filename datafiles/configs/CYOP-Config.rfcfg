@@ -1,0 +1,52 @@
+{
+	"rf_configversion" : 1,
+	
+	"name" : "Pizza Tower (CYOP) [Test]",
+	"version" : 1,
+	"roomFormat" : "cyop",
+	
+	"roomDefaults" : {
+		"width" : 960,
+		"height" : 540,
+		"gridSize" : 32
+	},
+	
+	"objects" : [
+		{
+			"name" : "Collision",
+			"objects" : [
+				{
+					"name" : "Solid",
+					"id" : "obj_solid",
+					"sprite" : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAKZJREFUWIVjfBd/+CDDAAIWBgYGhpcLrwyI5eLxOhAHMDAwMGgyZNLV8usM0xkYGBgYmOhqKxbAgsx5F3+YLpYKLbSFswdXCMAArRKleLwOhhjOEND4n8Gg8T+DJg4hygH0AlijgIGBgeEG4wy6OGDAQ2DUAaMOGHXAqANGHTDqgFEHYG0PYGs60QoMeAgMuANQogC5vU53B8C6SvQGgyMK6Jnq0QEArkMWVCKaugIAAAAASUVORK5CYII="
+				},
+				{
+					"name" : "Platform",
+					"id" : "obj_platform",
+					"sprite" : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAFJSURBVFhH1ZLhkcJQCITTkD356zqxgCvD3tKDJ8i+WQnk4BnHu535JsljWYhxuev2YVS3r9P3r4jvYd+V+qJ+AI+YIT7caxAq2uTgjEilhqCxqyinpNGIezmc1CELvKK5BWaaEv2NBS7n62cXkKtR0rsWKCtbAM8ZXnp+1AIjLAJ1QzT8uJfDqsJg+SMB1D2R355b2gTycIGHRnCPZbSkIWhGEOMHeqSPaCsdLEQDGfQTU9JhcgXRMMC+hLbGG8t9h3VdB67W0tPwIGwDPH4B+oVaGgtwmA/mT4AaA59cjZI2b48wH8wLcB0e9tlzSeECWbAbkHrsrKR0AZxxMIN65LHzknQBXoLxwVWsvyQ1Y4mdsBnKOvRXsL6WnoZHoQLqTOJpSxuzTyDAE9UAPHemND4DiIZESK/xkkaQX4RJBguHyofv8Z+0LD8NGq4VUu7dOQAAAABJRU5ErkJggg==",
+					"spriteBBox" : [0, 0, 31, 31]
+				},
+				{
+					"name" : "Slope",
+					"id" : "obj_slope",
+					"sprite" : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAADBSURBVFhHxY4LCoQwFMR6/7t4RVnKRnTdqP282kBAcN5M00zWlBY+3yePT3vANj7lAcfx1x9wHn/1ATae5fdYbHiTyDhs9CixMdjgWaLx2JhJPBYbupKTOGzkTs5isIEnOe3HykvkvA8rLpWKdqy0RmrasMJaqarHylqkrg4rapXKcqykR2rLsIJeqX7GjiOk/h47jJKJa+woUmYcO4iWqX8sPELmfrHgKJncsdBImf1igdEyPWc8O3U8O3V8TWn5ALA+cN6176n+AAAAAElFTkSuQmCC"
+				},
+				{
+					"name" : "Ladder",
+					"id" : "obj_ladder",
+					"sprite" : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAERSURBVFhH7ZbbrcIwEAVNN5TDJyVRAuXRScjYnGgTjGObRVGAI43k9WN3uPBxwyPD7XIerscwnMY19cghnvgl9mYGs6jTdkpOwDt1AkCdtl2zEwHHr0B9Jj4loPsz6GdhryRA4gEXWNdih1joI/ShmgRssxJ20CskoJp31Ay1mRqylm0N3F2DnvZNTuJJIAdnvUi2SqBAb5oFvFMUmIZ/tYCG/wWWw0nc1AXqtO2a7QXozYyfFeBfvLKADKnTtmvcBHTeBTNqBbJwrxferwqA6hy604o+GGv6sGawMhtAzQPboBXeW+gJnFULvAM9FsQfYVFA9tQOLNMs4J06AfPn887mArF/iwDGntlegN5zgRDuGltBmriIDfUAAAAASUVORK5CYII="
+				}
+			]
+		}
+	],
+	
+	"layers" : [
+		{
+			"name" : "Instances",
+			"displayName" : "Instances",
+			"depth" : 0,
+			"type" : "instance",
+			"objects" : "objects"
+		}
+	]
+}

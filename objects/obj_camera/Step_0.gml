@@ -1,6 +1,16 @@
 updateCamera()
-if INPUT_USED_UI
+if obj_mainUI.showConfigPicker
 	exit;
+
+if INPUT_USED_UI
+{
+	if mouseDrag
+	{
+		mouseDrag = false
+		window_mouse_set_locked(false)
+	}
+	exit;
+}
 
 var cx = camera_get_view_x(cam)
 var cy = camera_get_view_y(cam)
@@ -41,10 +51,18 @@ if (vMove != 0)
 camera_set_view_pos(cam, cx, cy)
 
 if (keyboard_check_pressed(vk_pageup) || mouse_wheel_up())
-	zoom -= 0.25
+{
+	zoom -= zoomIncrement
+	cameraLerp(mouse_x, mouse_y, 0.5)
+	updateCamera()
+}
 else if (keyboard_check_pressed(vk_pagedown) || mouse_wheel_down())
-	zoom += 0.25
-zoom = clamp(zoom, 0.25, 2)
+{
+	zoom += zoomIncrement
+	reverseCameraLerp(mouse_x, mouse_y, 0.5)
+	updateCamera()
+}
+zoom = clamp(zoom, zoomMin, zoomMax)
 
 if keyboard_check_pressed(ord("C"))
 	centerCamera()

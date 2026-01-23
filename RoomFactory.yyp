@@ -16,6 +16,7 @@
   "ForcedPrefabProjectReferences":[],
   "IncludedFiles":[
     {"$GMIncludedFile":"","%Name":"ANTONBLAST-Config.rfcfg","CopyToMask":-1,"filePath":"datafiles/configs","name":"ANTONBLAST-Config.rfcfg","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
+    {"$GMIncludedFile":"","%Name":"CYOP-Config.rfcfg","CopyToMask":-1,"filePath":"datafiles/configs","name":"CYOP-Config.rfcfg","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"OpenSans_Condensed-Bold.ttf","CopyToMask":-1,"filePath":"datafiles/fonts","name":"OpenSans_Condensed-Bold.ttf","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"OpenSans_Condensed-BoldItalic.ttf","CopyToMask":-1,"filePath":"datafiles/fonts","name":"OpenSans_Condensed-BoldItalic.ttf","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"OpenSans_Condensed-ExtraBold.ttf","CopyToMask":-1,"filePath":"datafiles/fonts","name":"OpenSans_Condensed-ExtraBold.ttf","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
@@ -70,6 +71,7 @@
     {"id":{"name":"obj_objectPlacer","path":"objects/obj_objectPlacer/obj_objectPlacer.yy",},},
     {"id":{"name":"obj_roomManager","path":"objects/obj_roomManager/obj_roomManager.yy",},},
     {"id":{"name":"obj_roomObject","path":"objects/obj_roomObject/obj_roomObject.yy",},},
+    {"id":{"name":"obj_settingsManager","path":"objects/obj_settingsManager/obj_settingsManager.yy",},},
     {"id":{"name":"obj_windowManager","path":"objects/obj_windowManager/obj_windowManager.yy",},},
     {"id":{"name":"rm_main","path":"rooms/rm_main/rm_main.yy",},},
     {"id":{"name":"Angle","path":"scripts/Angle/Angle.yy",},},
@@ -81,6 +83,7 @@
     {"id":{"name":"scr_config","path":"scripts/scr_config/scr_config.yy",},},
     {"id":{"name":"scr_grid","path":"scripts/scr_grid/scr_grid.yy",},},
     {"id":{"name":"scr_mainUI","path":"scripts/scr_mainUI/scr_mainUI.yy",},},
+    {"id":{"name":"scr_recents","path":"scripts/scr_recents/scr_recents.yy",},},
     {"id":{"name":"scr_roomSaving","path":"scripts/scr_roomSaving/scr_roomSaving.yy",},},
     {"id":{"name":"scr_utils","path":"scripts/scr_utils/scr_utils.yy",},},
     {"id":{"name":"Vector2","path":"scripts/Vector2/Vector2.yy",},},

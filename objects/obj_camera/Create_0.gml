@@ -25,8 +25,47 @@ centerCamera = function()
 	camera_set_view_pos(cam, nx, ny)
 }
 
+centerCameraAtPos = function(px, py)
+{
+	var nx = px - ((room_width * zoom) / 2)
+	var ny = py - ((room_height * zoom) / 2)
+	
+	camera_set_view_pos(cam, nx, ny)
+}
+
+cameraLerp = function(px, py, pspd)
+{
+	var cx = camera_get_view_x(cam)
+	var cy = camera_get_view_y(cam)
+	
+	var nx = px - ((room_width * zoom) / 2)
+	var ny = py - ((room_height * zoom) / 2)
+	
+	var ncx = lerp(cx, nx, pspd)
+	var ncy = lerp(cy, ny, pspd)
+	
+	camera_set_view_pos(cam, ncx, ncy)
+}
+
+reverseCameraLerp = function(px, py, pspd)
+{
+	var cx = camera_get_view_x(cam)
+	var cy = camera_get_view_y(cam)
+	
+	var nx = px - ((room_width * zoom) / 2)
+	var ny = py - ((room_height * zoom) / 2)
+	
+	var ncx = lerp(cx, nx, pspd)
+	var ncy = lerp(cy, ny, pspd)
+	
+	camera_set_view_pos(cam, cx + (cx - ncx), cy + (cy - ncy))
+}
+
 cam = camera_create_view(0, 0, room_width, room_height)
 zoom = 1
+zoomMin = 0.1
+zoomMax = 2
+zoomIncrement = 0.1
 
 cameraInit()
 centerCamera()

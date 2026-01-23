@@ -1,16 +1,33 @@
-with (instance_position(mouse_x, mouse_y, obj_roomObject))
+if !config_loaded()
+	exit;
+if (layer_exists(currentLayer) && !layer_get_visible(currentLayer))
+	exit;
+
+if (position_meeting(mouse_x, mouse_y, obj_roomObject) &&
+	!instance_exists(obj_objectPlacer) &&
+	!(INPUT_USED_UI) &&
+	!window_mouse_get_locked() &&
+	!draggingObject &&
+	!resizingObject &&
+	!obj_camera.mouseDrag)
 {
-	if instance_exists(obj_objectPlacer)
+	var num = instance_position_list(mouse_x, mouse_y, obj_roomObject, tempMeetingList, false)
+	for (var i = 0; i < num; i++)
+	{
+		var inst = ds_list_find_value(tempMeetingList, i)
+		if (inst == -4)
+			continue;
+		if (layer_get_name(inst.layer) != other.currentLayer)
+			continue;
+		
+		with (inst)
+		{
+			var c = c_white
+			draw_rectangle_color(bbox_left, bbox_top, bbox_right, bbox_bottom, c, c, c, c, true)
+		}
 		break;
-	if (layer_get_name(layer) != other.currentLayer)
-		break;
-	if (INPUT_USED_UI || window_mouse_get_locked())
-		break;
-	if (other.draggingObject || other.resizingObject)
-		break;
-	
-	var c = c_white
-	draw_rectangle_color(bbox_left, bbox_top, bbox_right, bbox_bottom, c, c, c, c, true)
+	}
+	ds_list_clear(tempMeetingList)
 }
 
 if (selectedObject != undefined)

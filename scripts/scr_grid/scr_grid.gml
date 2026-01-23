@@ -22,32 +22,3 @@ function grid_snap(xsize, ysize)
 	if (y > py)
 		y -= ysize
 }
-
-function ui_gridsize()
-{
-	ImGui.SetNextWindowPos(room_width - 10, room_height - 8, ImGuiCond.Always, 1, 1)
-	var window_flags = ImGuiWindowFlags.NoDecoration |
-					ImGuiWindowFlags.AlwaysAutoResize |
-					ImGuiWindowFlags.NoSavedSettings |
-					ImGuiWindowFlags.NoFocusOnAppearing |
-					ImGuiWindowFlags.NoNav
-					
-	if ImGui.Begin("Grid Size", true, window_flags)
-	{
-		ImGui.Text(concat("Grid Size: ", gridSize))
-		
-		ImGui.SameLine()
-		if ImGui.Button("+", 20, 20)
-			grid_increase()
-		
-		ImGui.SameLine()
-		if ImGui.Button("-", 20, 20)
-			grid_decrease()
-			
-		ImGui.SameLine()
-		if ImGui.Button("/", 20, 20)
-			gridSize = 16
-		
-		ImGui.End()
-	}
-}

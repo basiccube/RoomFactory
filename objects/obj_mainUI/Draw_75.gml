@@ -1,5 +1,7 @@
 if INPUT_USED_UI
 	exit;
+if obj_camera.mouseDrag
+	exit;
 
 if (selectedObject != undefined)
 {
@@ -29,7 +31,6 @@ if (selectedObject != undefined)
 		
 		str = concat("X: ", ox, ", Y: ", oy)
 	}
-	
 	
 	draw_mouse_tooltip(0, 16, str)
 }

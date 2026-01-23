@@ -1,3 +1,9 @@
+if showConfigPicker
+{
+	ui_configpicker()
+	exit;
+}
+
 ui_mainmenubar()
 ui_objectpicker()
 ui_layerlist()
@@ -16,8 +22,26 @@ if keyboard_check_pressed(vk_add)
 else if keyboard_check_pressed(vk_subtract)
 	grid_decrease()
 
-if INPUT_USED_UI
+if !config_loaded()
 	exit;
+
+if (layer_exists(currentLayer) && !layer_get_visible(currentLayer))
+{
+	deselectObject()
+	exit;
+}
+
+if INPUT_USED_UI
+{
+	if !mouse_check_button(mb_left)
+	{
+		window_set_cursor(cr_default)
+		resizingObject = false
+		if draggingObject
+			releaseDraggedObject()
+	}
+	exit;
+}
 if window_mouse_get_locked()
 	exit;
 	
@@ -128,14 +152,7 @@ if (selectedObject != undefined && instance_exists(selectedObject))
 		}
 		
 		if !mouse_check_button(mb_left)
-		{
-			draggingObject = false
-			with (selectedObject)
-			{
-				image_alpha = 1
-				move_snap(other.gridSize, other.gridSize)
-			}
-		}
+			releaseDraggedObject()
 	}
 	else if resizingObject
 	{

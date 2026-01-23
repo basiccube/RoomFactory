@@ -1,8 +1,11 @@
+///@desc Save Settings
+
 var config = {
 	windowX : window_get_x(),
 	windowY : window_get_y(),
 	windowWidth : window_get_width(),
 	windowHeight : window_get_height(),
+	recents : global.recents
 }
 
 var json = json_stringify(config, true)

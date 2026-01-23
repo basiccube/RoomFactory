@@ -13,9 +13,7 @@ global.configSprites = ds_map_create()
 ///@param {String} name
 function config_load(name)
 {
-	// temp until a proper UI is made for selecting the config
-	//var path = concat(CONFIG_PATH, name)
-	var path = name
+	var path = concat(CONFIG_PATH, name)
 	if !file_exists(path)
 		return false;
 	
@@ -37,6 +35,12 @@ function config_load(name)
 	global.config = json
 	print($"Loaded config {json.name} version {json.version}, format version {json.rf_configversion}")
 	
+	obj_roomManager.roomFormat = ROOMFORMAT_RF
+	if struct_exists(json, "roomFormat")
+		obj_roomManager.roomFormat = json.roomFormat
+	
+	print($"Config room format : {obj_roomManager.roomFormat}")
+		
 	obj_mainUI.currentLayer = config_find_instance_layer().name
 	return true;
 }
@@ -193,6 +197,36 @@ function config_get_layer_objects(objects)
 	return objects;
 }
 
+function config_create_layers()
+{
+	print("Creating layers")
+	
+	var arr = config_get_layers()
+	for (var i = 0, n = array_length(arr); i < n; i++)
+	{
+		var lay = arr[i]
+		if !layer_exists(lay.name)
+			layer_create(lay.depth, lay.name)
+	}
+}
+
+function config_delete_layers()
+{
+	print("Deleting all layers")
+	
+	var arr = config_get_layers()
+	for (var i = 0, n = array_length(arr); i < n; i++)
+	{
+		var lay = arr[i]
+		if !layer_exists(lay.name)
+			continue;
+		
+		var layID = layer_get_id(lay.name)
+		layer_destroy_instances(layID)
+		layer_destroy(layID)
+	}
+}
+
 ///@param {String} name
 function config_get_object_category(name)
 {
@@ -246,50 +280,63 @@ function config_get_objectdata(name, layname)
 			return obj;
 		}
 	}
-}
-
-///@param {String} objectID
-function config_get_object_sprite(objectID)
-{
-	var spr = ds_map_find_value(global.configSprites, objectID)
-	if (spr != undefined)
-		return spr;
 	
+	print($"No object named {name} was found in the current configuration")
 	return undefined;
 }
 
-///@param {Struct} objectData
-function config_get_objectdata_sprite(objectData)
+///@param {Struct, String} object
+function config_get_object_sprite(object)
 {
-	var spr = ds_map_find_value(global.configSprites, objectData[$ "id"])
+	if is_string(object)
+	{
+		var spr = ds_map_find_value(global.configSprites, object)
+		if (spr != undefined)
+			return spr;
+		
+		return undefined;
+	}
+	
+	var spr = ds_map_find_value(global.configSprites, object[$ "id"])
 	if (spr != undefined)
 		return spr;
 	
-	if !struct_exists(objectData, "sprite")
+	if !struct_exists(object, "sprite")
 	{
-		print("Can't get object sprite: No sprite base64 string present")
+		print("Can't get object sprite : No sprite base64 string present")
 		return undefined;
 	}
 	
 	var offX = 0
 	var offY = 0
-	if struct_exists(objectData, "spriteX")
-		offX = objectData[$ "spriteX"]
-	if struct_exists(objectData, "spriteY")
-		offY = objectData[$ "spriteY"]
+	if struct_exists(object, "spriteX")
+		offX = object[$ "spriteX"]
+	if struct_exists(object, "spriteY")
+		offY = object[$ "spriteY"]
 	
-	print("Adding sprite for ", objectData[$ "id"])
-	var s = sprite_add(objectData[$ "sprite"], 1, false, false, offX, offY)
+	print("Adding sprite for ", object[$ "id"])
+	var s = sprite_add(object[$ "sprite"], 1, false, false, offX, offY)
 	
-	if struct_exists(objectData, "spriteBBox")
+	if struct_exists(object, "spriteBBox")
 	{
-		var bbox = objectData[$ "spriteBBox"]
+		var bbox = object[$ "spriteBBox"]
 		sprite_set_bbox_mode(s, bboxmode_manual)
 		sprite_set_bbox(s, bbox[0], bbox[1], bbox[2], bbox[3])
 	}
 	
-	ds_map_set(global.configSprites, objectData[$ "id"], s)
+	ds_map_set(global.configSprites, object[$ "id"], s)
 	return s;
+}
+
+function config_get_file_filter()
+{
+	switch obj_roomManager.roomFormat
+	{
+		case ROOMFORMAT_RF:
+			return [ROOM_FILTER, ROOM_EXTENSION];
+		case ROOMFORMAT_CYOP:
+			return [ROOM_FILTER_CYOP, ROOM_EXTENSION_CYOP];
+	}
 }
 
 ///@param {Real} x
@@ -305,11 +352,30 @@ function create_room_object(ox, oy, olayer, odata)
 		objectID = odata.id
 		
 		if struct_exists(odata, "variables")
+		{
 			variables = variable_clone(odata.variables)
+			for (var i = 0, n = array_length(variables); i < n; i++)
+			{
+				var v = variables[i]
+				if !is_string(v)
+					continue;
+				if !struct_exists(global.config, v)
+					continue;
+				
+				var nv = variable_clone(global.config[$ v])
+				array_delete(variables, i, 1)
+				
+				i--
+				n--
+				
+				var arr = array_concat(variables, nv)
+				variables = arr
+			}
+		}
 		if struct_exists(odata, "allowResize")
 			canResize = odata.allowResize
 		
-		sprite_index = config_get_objectdata_sprite(odata)
+		sprite_index = config_get_object_sprite(odata)
 	}
 	
 	return oid;

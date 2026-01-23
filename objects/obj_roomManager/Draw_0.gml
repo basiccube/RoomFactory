@@ -1,3 +1,6 @@
+if obj_mainUI.showConfigPicker
+	exit;
+
 // draw grid
 var gsize = obj_mainUI.gridSize
 var gcol = c_gray
