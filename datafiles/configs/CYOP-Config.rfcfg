@@ -42,9 +42,30 @@
 	
 	"layers" : [
 		{
-			"name" : "Instances",
+			"name" : "Instances_0",
 			"displayName" : "Instances",
 			"depth" : 0,
+			"type" : "instance",
+			"objects" : "objects"
+		},
+		{
+			"name" : "Instances_1",
+			"displayName" : "Instances (1)",
+			"depth" : -1,
+			"type" : "instance",
+			"objects" : "objects"
+		},
+		{
+			"name" : "Instances_2",
+			"displayName" : "Instances (2)",
+			"depth" : -2,
+			"type" : "instance",
+			"objects" : "objects"
+		},
+		{
+			"name" : "Instances_3",
+			"displayName" : "Instances (3)",
+			"depth" : -3,
 			"type" : "instance",
 			"objects" : "objects"
 		}

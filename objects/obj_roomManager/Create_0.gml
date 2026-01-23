@@ -2,9 +2,14 @@
 #macro ROOMFORMAT_CYOP "cyop"
 
 roomInfo = {
-	width : 384,
-	height : 216,
+	width : 640,
+	height : 480,
 	title : "Room Title"
+}
+
+cyopRoomInfo = {
+	offsetX : 0,
+	offsetY : 0
 }
 
 roomFormat = ROOMFORMAT_RF

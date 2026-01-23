@@ -17,6 +17,7 @@
   "IncludedFiles":[
     {"$GMIncludedFile":"","%Name":"ANTONBLAST-Config.rfcfg","CopyToMask":-1,"filePath":"datafiles/configs","name":"ANTONBLAST-Config.rfcfg","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"CYOP-Config.rfcfg","CopyToMask":-1,"filePath":"datafiles/configs","name":"CYOP-Config.rfcfg","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
+    {"$GMIncludedFile":"","%Name":"cyoptest.json","CopyToMask":-1,"filePath":"datafiles","name":"cyoptest.json","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"OpenSans_Condensed-Bold.ttf","CopyToMask":-1,"filePath":"datafiles/fonts","name":"OpenSans_Condensed-Bold.ttf","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"OpenSans_Condensed-BoldItalic.ttf","CopyToMask":-1,"filePath":"datafiles/fonts","name":"OpenSans_Condensed-BoldItalic.ttf","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"OpenSans_Condensed-ExtraBold.ttf","CopyToMask":-1,"filePath":"datafiles/fonts","name":"OpenSans_Condensed-ExtraBold.ttf","resourceType":"GMIncludedFile","resourceVersion":"2.0",},

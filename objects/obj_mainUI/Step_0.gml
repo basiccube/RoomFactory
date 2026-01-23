@@ -1,6 +1,7 @@
 if showConfigPicker
 {
 	ui_configpicker()
+	ui_errormessage()
 	exit;
 }
 
@@ -10,12 +11,13 @@ ui_layerlist()
 ui_inspector()
 ui_gridsize()
 ui_aboutwindow()
+ui_errormessage()
 
 if showDemoWindow
 	showDemoWindow = ImGui.ShowDemoWindow(showDemoWindow)
 if showImGuiAboutWindow
 	showImGuiAboutWindow = ImGui.ShowAboutWindow(showImGuiAboutWindow)
-	
+
 // grid keyboard controls
 if keyboard_check_pressed(vk_add)
 	grid_increase()
@@ -33,7 +35,7 @@ if (layer_exists(currentLayer) && !layer_get_visible(currentLayer))
 
 if INPUT_USED_UI
 {
-	if !mouse_check_button(mb_left)
+	if (!mouse_check_button(mb_left) && (resizingObject || draggingObject))
 	{
 		window_set_cursor(cr_default)
 		resizingObject = false

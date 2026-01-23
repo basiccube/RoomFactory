@@ -3,6 +3,7 @@
 
 function ui_mainmenubar()
 {
+	ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, 12, 6)
 	ImGui.BeginMainMenuBar()
 	
 	if ImGui.BeginMenu("File")
@@ -87,6 +88,7 @@ function ui_mainmenubar()
 	}
 	
 	ImGui.EndMainMenuBar()
+	ImGui.PopStyleVar()
 }
 
 function ui_aboutwindow()
@@ -497,9 +499,22 @@ function ui_inspector()
 			ImGui.Text(rmstr)
 			ImGui.NewLine()
 			
-			ImGui.SetNextItemWidth(224)
-			var title = ImGui.InputText("Title", obj_roomManager.roomInfo.title)
-			obj_roomManager.roomInfo.title = title
+			if (obj_roomManager.roomFormat == ROOMFORMAT_CYOP)
+			{
+				ImGui.SetNextItemWidth(224)
+				var offx = ImGui.DragInt("X", obj_roomManager.cyopRoomInfo.offsetX)
+				obj_roomManager.cyopRoomInfo.offsetX = offx
+			
+				ImGui.SetNextItemWidth(224)
+				var offy = ImGui.DragInt("Y", obj_roomManager.cyopRoomInfo.offsetY)
+				obj_roomManager.cyopRoomInfo.offsetY = offy
+			}
+			else
+			{
+				ImGui.SetNextItemWidth(224)
+				var title = ImGui.InputText("Title", obj_roomManager.roomInfo.title)
+				obj_roomManager.roomInfo.title = title
+			}
 			
 			ImGui.Separator()
 			
@@ -522,7 +537,6 @@ function ui_configpicker()
 		exit;
 	
 	ImGui.SetNextWindowPos(room_width / 2, room_height / 2, ImGuiCond.Always, 0.5, 0.5)
-	ImGui.SetNextWindowFocus()
 	
 	var show = ImGui.Begin("Welcome to Room Factory", showConfigPicker, ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoSavedSettings | ImGuiWindowFlags.NoCollapse, ImGuiReturnMask.Both)
 	showConfigPicker = show & ImGuiReturnMask.Pointer
@@ -575,9 +589,11 @@ function ui_configpicker()
 		
 		if ImGui.Button("OK", BUTTON_WIDTH, BUTTON_HEIGHT)
 		{
-			config_load(searcharr[selection][0])
-			clear_room()
-			showConfigPicker = false
+			if config_load(searcharr[selection][0])
+			{
+				clear_room()
+				showConfigPicker = false
+			}
 		}
 		
 		if disabled
@@ -589,6 +605,42 @@ function ui_configpicker()
 	}
 	
 	ImGui.End()
+}
+
+function ui_errormessage()
+{
+	ImGui.SetNextWindowPos(room_width / 2, room_height / 2, ImGuiCond.Always, 0.5, 0.5)
+	
+	if ImGui.BeginPopup("Error", ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoResize)
+	{
+		ImGui.Text("Error")
+		ImGui.Separator()
+	
+		ImGui.Text(errorText)
+		if (errorText2 != "")
+			ImGui.Text(errorText2)
+	
+		ImGui.NewLine()
+		if ImGui.Button("OK", BUTTON_WIDTH, BUTTON_HEIGHT)
+			ImGui.CloseCurrentPopup()
+		ImGui.EndPopup()
+	}
+	
+	if showError
+	{
+		ImGui.OpenPopup("Error")
+		showError = false
+	}
+}
+
+function error_message(str, str2 = "")
+{
+	with (obj_mainUI)
+	{
+		errorText = str
+		errorText2 = str2
+		showError = true
+	}
 }
 
 function update_titlebar()

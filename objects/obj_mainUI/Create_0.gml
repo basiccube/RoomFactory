@@ -24,6 +24,10 @@ showAboutWindow = false
 showDemoWindow = false
 showConfigPicker = true
 
+errorText = "Error!"
+errorText2 = ""
+showError = false
+
 windows = {
 	objectpicker : true,
 	layerlist : true,

@@ -19,15 +19,20 @@ function config_load(name)
 	
 	var str = file_text_read_all(path)
 	var json = json_parse(str)
+	var errstr = "Failed to load config file."
 	
 	if !struct_exists(json, "rf_configversion")
 	{
+		error_message(errstr, "No config format version was found.")
 		print("Invalid config, no config format version found")
 		return false;
 	}
 	
 	if (json.rf_configversion != CONFIG_VERSION)
 	{
+		var err = $"Invalid config version, expected {CONFIG_VERSION}, got {json.rf_configversion}"
+		error_message(errstr, err)
+		
 		print($"Invalid config version, expected {CONFIG_VERSION}, got {json.rf_configversion}")
 		return false;
 	}
@@ -261,6 +266,9 @@ function config_get_object_category(name)
 function config_get_objectdata(name, layname)
 {
 	var lay = config_get_layer(layname)
+	if is_undefined(lay)
+		return undefined;
+	
 	if (lay.type != CONFIG_LAYER_INSTANCE)
 	{
 		print("Incorrect layer type")
@@ -304,7 +312,12 @@ function config_get_object_sprite(object)
 	if !struct_exists(object, "sprite")
 	{
 		print("Can't get object sprite : No sprite base64 string present")
-		return undefined;
+		print("Using generated sprite instead...")
+		
+		var gspr = create_placeholder_sprite(global.config.roomDefaults.gridSize)
+		ds_map_set(global.configSprites, object[$ "id"], gspr)
+		
+		return gspr;
 	}
 	
 	var offX = 0
