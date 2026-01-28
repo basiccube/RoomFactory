@@ -12,6 +12,7 @@ ui_inspector()
 ui_gridsize()
 ui_aboutwindow()
 ui_errormessage()
+menu_handle_shortcuts()
 
 if showDemoWindow
 	showDemoWindow = ImGui.ShowDemoWindow(showDemoWindow)

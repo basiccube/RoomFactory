@@ -1,6 +1,53 @@
 #macro BUTTON_WIDTH 80
 #macro BUTTON_HEIGHT 24
 
+function menu_new()
+{
+	clear_room()
+}
+
+function menu_open()
+{
+	var filter = config_get_file_filter()
+	var p = get_open_filename(filter[0], "")
+	if (p != "")
+	{
+		load_room(p)
+		recents_push(p)
+	}
+}
+
+function menu_save()
+{
+	save_room(global.roomPath)
+	recents_push(global.roomPath)
+}
+
+function menu_save_as()
+{
+	save_room()
+	recents_push(global.roomPath)
+}
+
+function menu_handle_shortcuts()
+{
+	if !keyboard_check(vk_control)
+		exit;
+		
+	// file menu
+	if keyboard_check_pressed(ord("N"))
+		menu_new()
+	if keyboard_check_pressed(ord("O"))
+		menu_open()
+	if keyboard_check_pressed(ord("S"))
+	{
+		if keyboard_check(vk_shift)
+			menu_save_as()
+		else
+			menu_save()
+	}
+}
+
 function ui_mainmenubar()
 {
 	ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, 12, 6)
@@ -8,20 +55,12 @@ function ui_mainmenubar()
 	
 	if ImGui.BeginMenu("File")
 	{
-		if ImGui.MenuItem("New")
-			clear_room()
+		if ImGui.MenuItem("New", "Ctrl+N")
+			menu_new()
 		ImGui.Separator()
 		
-		if ImGui.MenuItem("Open")
-		{
-			var filter = config_get_file_filter()
-			var p = get_open_filename(filter[0], "")
-			if (p != "")
-			{
-				load_room(p)
-				recents_push(p)
-			}
-		}
+		if ImGui.MenuItem("Open", "Ctrl+O")
+			menu_open()
 		
 		if ImGui.BeginMenu("Recent")
 		{
@@ -42,16 +81,10 @@ function ui_mainmenubar()
 		
 		ImGui.Separator()
 		
-		if ImGui.MenuItem("Save")
-		{
-			save_room(global.roomPath)
-			recents_push(global.roomPath)
-		}
-		if ImGui.MenuItem("Save As...")
-		{
-			save_room()
-			recents_push(global.roomPath)
-		}
+		if ImGui.MenuItem("Save", "Ctrl+S")
+			menu_save()
+		if ImGui.MenuItem("Save As...", "Ctrl+Shift+S")
+			menu_save_as()
 		
 		ImGui.Separator()
 		if ImGui.MenuItem("Quit")
