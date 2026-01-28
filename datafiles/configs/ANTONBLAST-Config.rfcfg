@@ -10,6 +10,42 @@
 		"gridSize" : 16
 	},
 	
+	"baseVariables" : [
+		["kinematic", false, "default"],
+		["conserved", false, "default"]
+	],
+	"baseVariableBlacklist" : [
+		"ob_chip",
+		"ob_redChip",
+		"ob_greenChip",
+		"ob_bruloChip",
+		"ob_bigChip",
+		"ob_bigChipGold",
+		"ob_spiritWonga",
+		"ob_vinyl",
+		"ob_paul",
+		
+		"ob_door",
+		"ob_dumpsterFloor",
+		"ob_dumpsterCeiling",
+		"ob_manholeFloor",
+		"ob_manholeCeiling",
+		"ob_warpTrigger",
+		
+		"ob_chip_BG",
+		"ob_redChip_BG",
+		"ob_bigChip_BG",
+		"ob_bigChipGold_BG",
+		"ob_vinyl_BG",
+		
+		"ob_door_BG",
+		"ob_dumpsterFloor_BG",
+		"ob_dumpsterCeiling_BG",
+		"ob_manholeFloor_BG",
+		"ob_manholeCeiling_BG",
+		"ob_warpTrigger_BG"
+	],
+	
 	"fgObjects" : [
 		{
 			"name" : "Collision",
@@ -334,8 +370,8 @@
 					"id" : "ob_spring",
 					"sprite" : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAhCAYAAAC4JqlRAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAGFSURBVFhHzZbRbcMwEEO9UEfpDv3qHN2pm3SIruGarmhTZ+os2QGSAA+w7nhHKkaATK/wmZ/MNM8/7zVfS81xVaeIbg9QCt9vVbKK348apwFRR5Ld4+YtLepRC5xWsMWNuCwz5zd5pg3Y4ooaE6cDNCdOo8iuukGisQwcGDHX11RqtQBgiRoDDDqieUbcWfy8GMQBJWpdOMBLKdxRzsdlSu/SEZoBKBjhytzDAnBudPZ2ALwGneFz7+u5FYDaqGetJ8StALy9nvncuwPmoh0LQD4XYE5wdroItM0AepsMNXbnDGhsABTPFuit442znoL+IQAKZwG4PBrgTwafNQRgXUGd33ipTV0BQOzrPx2tZ3tuBSDrAjF3IVrcDhDN15qcZbElDQAodFRGC81eEoLmQwHWATVYONXsBkddodTyAIfFC1FDerRDAeIytzBymNmN/vsjAcA20GFOnPHW4769nwd4NDYACxqkBX5GGTRqkQYgzjgjzvfSDECcGXDaK2wBnsc0/wELUGo+PAemZQAAAABJRU5ErkJggg==",
 					"variables" : [
-						["targetX", -1, "number"],
-						["targetY", -1, "number"],
+						["targetX", 0, "default"],
+						["targetY", 0, "default"],
 						["canSteer", true, "bool"]
 					]
 				},
@@ -631,8 +667,8 @@
 					"id" : "ob_spring_BG",
 					"sprite" : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAARCAYAAADUryzEAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACSSURBVDhPrZKJDYAwDAO7EKOwBnOwE5uwUKhFQ9yX8CCdGudxKpXwxycfCSL7fLLGWHHkzMCEbJMNINZ8McTkiVZjmdMlSVvDUzKDJCqwrYXLAI2tPBgaLBEdxgnNddA10Cuq5hwbdQ2ypvjmGrMp4sqg3Hr9MOnk2q0Bb1bNJq4bjHAZQDPoKUm97aKHy+A9QQ6sV5uLzVkW7QAAAABJRU5ErkJggg==",
 					"variables" : [
-						["targetX", -1, "number"],
-						["targetY", -1, "number"],
+						["targetX", 0, "default"],
+						["targetY", 0, "default"],
 						["canSteer", true, "bool"]
 					]
 				},

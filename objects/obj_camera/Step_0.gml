@@ -53,14 +53,20 @@ camera_set_view_pos(cam, cx, cy)
 if (keyboard_check_pressed(vk_pageup) || mouse_wheel_up())
 {
 	zoom -= zoomIncrement
-	cameraLerp(mouse_x, mouse_y, 0.5)
-	updateCamera()
+	if (zoom >= zoomMin)
+	{
+		cameraLerp(mouse_x, mouse_y, 0.5)
+		updateCamera()
+	}
 }
 else if (keyboard_check_pressed(vk_pagedown) || mouse_wheel_down())
 {
 	zoom += zoomIncrement
-	reverseCameraLerp(mouse_x, mouse_y, 0.5)
-	updateCamera()
+	if (zoom <= zoomMax)
+	{
+		reverseCameraLerp(mouse_x, mouse_y, 0.5)
+		updateCamera()
+	}
 }
 zoom = clamp(zoom, zoomMin, zoomMax)
 

@@ -192,6 +192,8 @@ function ui_objectpicker()
 							ImGui.SameLine()
 							if ImGui.Selectable(obj.name, false, ImGuiSelectableFlags.None, 0, 32)
 							{
+								deselectObject()
+								lastObject = obj
 								with (instance_create_depth(mouse_x, mouse_y, -10, obj_objectPlacer))
 								{
 									objectData = obj
@@ -271,11 +273,12 @@ function ui_layerlist()
 	}
 }
 
+#macro VARTYPE_DEFAULT "default"
 #macro VARTYPE_BOOL "bool"
 #macro VARTYPE_NUMBER "number"
 #macro VARTYPE_STRING "string"
 
-global.varTypes = [VARTYPE_BOOL, VARTYPE_NUMBER, VARTYPE_STRING]
+global.varTypes = [VARTYPE_DEFAULT, VARTYPE_BOOL, VARTYPE_NUMBER, VARTYPE_STRING]
 
 function ui_inspector()
 {
@@ -341,6 +344,9 @@ function ui_inspector()
 					var listval = value
 					switch type
 					{
+						case VARTYPE_DEFAULT:
+							listval = ""
+							break
 						case VARTYPE_BOOL:
 							listval = value ? "true" : "false"
 							break

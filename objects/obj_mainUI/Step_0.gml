@@ -47,8 +47,27 @@ if INPUT_USED_UI
 if window_mouse_get_locked()
 	exit;
 	
+// hold alt to create last picked object
+if (lastObject != undefined && keyboard_check(vk_alt))
+{
+	if mouse_check_button_released(mb_left)
+	{
+		var px = x
+		var py = y
+		
+		x = mouse_x
+		y = mouse_y
+		grid_snap(gridSize, gridSize)
+		
+		create_room_object(x, y, currentLayer, lastObject)
+		
+		x = px
+		y = py
+	}
+}
+	
 // object selection
-if mouse_check_button_pressed(mb_left)
+if (mouse_check_button_pressed(mb_left) && !keyboard_check(vk_alt))
 {
 	if position_meeting(mouse_x, mouse_y, obj_roomObject)
 	{
@@ -78,8 +97,8 @@ if (selectedObject != undefined && instance_exists(selectedObject))
 {
 	var mouseHovering = position_meeting(mouse_x, mouse_y, selectedObject)
 	
-	// drag
-	if (mouseHovering && mouse_check_button(mb_left) && !draggingObject && !resizingObject)
+	// drag and resize
+	if (mouseHovering && mouse_check_button(mb_left) && !keyboard_check(vk_alt) && !draggingObject && !resizingObject)
 	{
 		var dragThreshold = 1
 		var startResize = false

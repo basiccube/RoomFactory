@@ -30,6 +30,26 @@ if (position_meeting(mouse_x, mouse_y, obj_roomObject) &&
 	ds_list_clear(tempMeetingList)
 }
 
+// hold alt visual
+if (lastObject != undefined && !(INPUT_USED_UI) && !window_mouse_get_locked() && keyboard_check(vk_alt))
+{
+	var px = x
+	var py = y
+		
+	x = mouse_x
+	y = mouse_y
+	grid_snap(gridSize, gridSize)
+	
+	draw_rectangle_color(x, y, x + gridSize, y + gridSize, c_green, c_green, c_green, c_green, true)
+	
+	x = px
+	y = py
+	
+	var spr = config_get_object_sprite(lastObject)
+	if (spr != undefined)
+		draw_sprite_ext(spr, 0, mouse_x, mouse_y, 1, 1, 0, c_white, 0.5)
+}
+
 if (selectedObject != undefined)
 {
 	var c = c_teal
@@ -77,7 +97,7 @@ if (selectedObject != undefined)
 	else
 	{
 		// resize visuals
-		if (selectedObject.canResize && !window_mouse_get_locked() && position_meeting(mouse_x, mouse_y, selectedObject))
+		if (selectedObject.canResize && !keyboard_check(vk_alt) && !window_mouse_get_locked() && position_meeting(mouse_x, mouse_y, selectedObject))
 		{
 			if bbox_on_left_edge(mouse_x, mouse_y, selectedObject)
 			{

@@ -56,6 +56,7 @@ resizeSavedScale = new Scale(1, 1)
 resizeSavedBBox = new Vector4(0, 0, 0, 0)
 
 currentLayer = undefined
+lastObject = undefined
 update_titlebar()
 	
 selectObject = function(inst)

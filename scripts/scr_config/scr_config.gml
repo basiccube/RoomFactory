@@ -385,6 +385,23 @@ function create_room_object(ox, oy, olayer, odata)
 				variables = arr
 			}
 		}
+		
+		// check if this object is in the base variable blacklist first
+		var inBlacklist = false
+		if struct_exists(global.config, "baseVariableBlacklist")
+		{
+			if array_contains(global.config[$ "baseVariableBlacklist"], objectID)
+				inBlacklist = true
+		}
+			
+		// base variables that all objects not in the blacklist will have
+		if (!inBlacklist && struct_exists(global.config, "baseVariables"))
+		{
+			var basearr = variable_clone(global.config[$ "baseVariables"])
+			var arr = array_concat(variables, basearr)
+			variables = arr
+		}
+		
 		if struct_exists(odata, "allowResize")
 			canResize = odata.allowResize
 		
