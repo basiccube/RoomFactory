@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_UI_mainMenuBar",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_UI_mainMenuBar",
+  "parent":{
+    "name":"RoomFactory",
+    "path":"RoomFactory.yyp",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

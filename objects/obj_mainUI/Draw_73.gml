@@ -5,33 +5,28 @@ if (layer_exists(currentLayer) && !layer_get_visible(currentLayer))
 
 if (position_meeting(mouse_x, mouse_y, obj_roomObject) &&
 	!instance_exists(obj_objectPlacer) &&
-	!(INPUT_USED_UI) &&
+	!INPUT_USED_UI &&
 	!window_mouse_get_locked() &&
 	!draggingObject &&
 	!resizingObject &&
+	!multiSelect &&
 	!obj_camera.mouseDrag)
 {
 	var num = instance_position_list(mouse_x, mouse_y, obj_roomObject, tempMeetingList, false)
 	for (var i = 0; i < num; i++)
 	{
 		var inst = ds_list_find_value(tempMeetingList, i)
-		if (inst == -4)
-			continue;
-		if (layer_get_name(inst.layer) != other.currentLayer)
-			continue;
-		
-		with (inst)
+		if instanceListCheck(inst)
 		{
-			var c = c_white
-			draw_rectangle_color(bbox_left, bbox_top, bbox_right, bbox_bottom, c, c, c, c, true)
+			drawInstanceOutline(inst, c_white)
+			break;
 		}
-		break;
 	}
 	ds_list_clear(tempMeetingList)
 }
 
 // hold alt visual
-if (lastObject != undefined && !(INPUT_USED_UI) && !window_mouse_get_locked() && keyboard_check(vk_alt))
+if (lastObject != undefined && !INPUT_USED_UI && !window_mouse_get_locked() && keyboard_check(vk_alt))
 {
 	var px = x
 	var py = y
@@ -40,7 +35,8 @@ if (lastObject != undefined && !(INPUT_USED_UI) && !window_mouse_get_locked() &&
 	y = mouse_y
 	grid_snap(gridSize, gridSize)
 	
-	draw_rectangle_color(x, y, x + gridSize, y + gridSize, c_green, c_green, c_green, c_green, true)
+	var c = c_green
+	draw_rectangle_color(x, y, x + gridSize, y + gridSize, c, c, c, c, true)
 	
 	x = px
 	y = py
@@ -50,16 +46,21 @@ if (lastObject != undefined && !(INPUT_USED_UI) && !window_mouse_get_locked() &&
 		draw_sprite_ext(spr, 0, mouse_x, mouse_y, 1, 1, 0, c_white, 0.5)
 }
 
-if (selectedObject != undefined)
+if isMultiSelection()
 {
-	var c = c_teal
-	draw_rectangle_color(selectedObject.bbox_left,
-						selectedObject.bbox_top,
-						selectedObject.bbox_right,
-						selectedObject.bbox_bottom,
-						c, c, c, c,
-						true)
+	for (var i = 0, n = array_length(selectionArray); i < n; i++)
+	{
+		var inst = selectionArray[i]
+		if instance_exists(inst)
+			drawInstanceOutline(inst, c_white)
+	}
+}
+
+if (array_length(selectionArray) > 0 && !isMultiSelection() && !is_undefined(selectionArray[0]))
+{
+	var selectedObject = selectionArray[0]
 	
+	drawInstanceOutline(selectedObject, c_teal)
 	if INPUT_USED_UI
 		exit;
 	
@@ -163,4 +164,38 @@ if (selectedObject != undefined)
 		else if drawBottomEdge
 			draw_line_color(bleft, bbottom, bright, bbottom, rcol, rcol)
 	}
+}
+
+if multiSelect
+{
+	var a = draw_get_alpha()
+	var c = c_aqua
+	
+	draw_set_alpha(0.65)
+	draw_rectangle_color(multiSelectStartPos.x, multiSelectStartPos.y, mouse_x, mouse_y, c, c, c, c, true)
+	
+	draw_set_alpha(0.25)
+	draw_rectangle_color(multiSelectStartPos.x, multiSelectStartPos.y, mouse_x, mouse_y, c, c, c, c, false)
+	
+	draw_set_alpha(a)
+	
+	var num = collision_rectangle_list(
+		multiSelectStartPos.x,
+		multiSelectStartPos.y,
+		mouse_x,
+		mouse_y,
+		obj_roomObject,
+		false,
+		true,
+		tempMeetingList,
+		false
+	)
+	
+	for (var i = 0; i < num; i++)
+	{
+		var inst = ds_list_find_value(tempMeetingList, i)
+		if instanceListCheck(inst)
+			drawInstanceOutline(inst, c_white)
+	}
+	ds_list_clear(tempMeetingList)
 }

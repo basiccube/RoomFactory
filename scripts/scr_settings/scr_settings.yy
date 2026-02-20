@@ -1,9 +1,9 @@
 {
   "$GMScript":"v1",
-  "%Name":"scr_recents",
+  "%Name":"scr_settings",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"scr_recents",
+  "name":"scr_settings",
   "parent":{
     "name":"RoomFactory",
     "path":"RoomFactory.yyp",

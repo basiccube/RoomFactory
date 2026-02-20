@@ -10,7 +10,7 @@ enum resizeType
 
 #macro MOUSE_OVER_UI ImGui.WantMouseCapture()
 #macro KEYBOARD_USED_UI ImGui.WantKeyboardCapture()
-#macro INPUT_USED_UI MOUSE_OVER_UI || KEYBOARD_USED_UI
+#macro INPUT_USED_UI (MOUSE_OVER_UI || KEYBOARD_USED_UI)
 
 ImGui.__Initialize()
 ImGui.AddFontFromFile(UI_MAINFONT, 16)
@@ -18,6 +18,8 @@ ImGui.AddFontFromFile(UI_MAINFONT, 16)
 globalvar mainFont;
 mainFont = font_add(UI_MAINFONT, 10, false, false, 32, 128)
 font_enable_sdf(mainFont, true)
+
+settings_load()
 
 showImGuiAboutWindow = false
 showAboutWindow = false
@@ -40,10 +42,13 @@ gridMaxSize = 32
 gridMinSize = 4
 gridIncrement = 4
 
-selectedObject = undefined
+selectionArray = []
 selectedVariableIndex = 0
 draggingObject = false
-dragPos = new Vector2(0, 0)
+dragPosArray = []
+
+multiSelect = false
+multiSelectStartPos = new Vector2(0, 0)
 
 resizingObject = false
 resizeDir = resizeType.right
@@ -61,28 +66,32 @@ update_titlebar()
 	
 selectObject = function(inst)
 {
-	if (selectedObject == inst)
+	if (array_length(selectionArray) > 0 && selectionArray[0] == inst)
 		exit;
 	
 	print("Selected object : ", inst)
-	selectedObject = inst
+	selectionArray = [inst]
+	multiSelect = false
 }
 	
 deselectObject = function()
 {
-	if (selectedObject != undefined)
+	if (array_length(selectionArray) <= 0)
+		exit;
+	
+	print("Deselecting objects")
+	array_foreach(selectionArray, function(e, i)
 	{
-		print("Deselected object : ", selectedObject)
-		if instance_exists(selectedObject)
+		if instance_exists(e)
 		{
-			if (selectedObject.image_xscale == 0)
-				selectedObject.image_xscale = 1
-			if (selectedObject.image_yscale == 0)
-				selectedObject.image_yscale = 1
+			if (e.image_xscale == 0)
+				e.image_xscale = 1
+			if (e.image_yscale == 0)
+				e.image_yscale = 1
 		}
-		
-		selectedObject = undefined
-	}
+	})
+	
+	selectionArray = []
 }
 
 releaseDraggedObject = function()
@@ -90,10 +99,52 @@ releaseDraggedObject = function()
 	if !draggingObject
 		exit;
 	
-	draggingObject = false
-	with (selectedObject)
+	array_foreach(dragPosArray, function(e, i)
 	{
-		image_alpha = 1
-		move_snap(other.gridSize, other.gridSize)
-	}
+		delete e;
+	})
+	dragPosArray = []
+	
+	array_foreach(selectionArray, function(e, i)
+	{
+		with (e)
+		{
+			image_alpha = 1
+			move_snap(other.gridSize, other.gridSize)
+		}
+	})
+	
+	draggingObject = false
+}
+
+isMultiSelection = function()
+{
+	return (array_length(selectionArray) > 1);
+}
+
+drawInstanceOutline = function(inst, color)
+{
+	draw_rectangle_color(
+		inst.bbox_left,
+		inst.bbox_top,
+		inst.bbox_right,
+		inst.bbox_bottom,
+		color,
+		color,
+		color,
+		color,
+		true
+	)
+}
+
+instanceListCheck = function(inst)
+{
+	if (inst == -4)
+		return false;
+	if !instance_exists(inst)
+		return false;
+	if (layer_get_name(inst.layer) != currentLayer)
+		return false;
+	
+	return true;
 }

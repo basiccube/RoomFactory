@@ -1,129 +1,6 @@
 #macro BUTTON_WIDTH 80
 #macro BUTTON_HEIGHT 24
 
-function menu_new()
-{
-	clear_room()
-}
-
-function menu_open()
-{
-	var filter = config_get_file_filter()
-	var p = get_open_filename(filter[0], "")
-	if (p != "")
-	{
-		load_room(p)
-		recents_push(p)
-	}
-}
-
-function menu_save()
-{
-	save_room(global.roomPath)
-	recents_push(global.roomPath)
-}
-
-function menu_save_as()
-{
-	save_room()
-	recents_push(global.roomPath)
-}
-
-function menu_handle_shortcuts()
-{
-	if !keyboard_check(vk_control)
-		exit;
-		
-	// file menu
-	if keyboard_check_pressed(ord("N"))
-		menu_new()
-	if keyboard_check_pressed(ord("O"))
-		menu_open()
-	if keyboard_check_pressed(ord("S"))
-	{
-		if keyboard_check(vk_shift)
-			menu_save_as()
-		else
-			menu_save()
-	}
-}
-
-function ui_mainmenubar()
-{
-	ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, 12, 6)
-	ImGui.BeginMainMenuBar()
-	
-	if ImGui.BeginMenu("File")
-	{
-		if ImGui.MenuItem("New", "Ctrl+N")
-			menu_new()
-		ImGui.Separator()
-		
-		if ImGui.MenuItem("Open", "Ctrl+O")
-			menu_open()
-		
-		if ImGui.BeginMenu("Recent")
-		{
-			for (var i = 0; i < MAX_RECENTS; i++)
-			{
-				var recent = global.recents[i]
-				if is_undefined(recent)
-					continue;
-				
-				if ImGui.MenuItem(recent)
-				{
-					load_room(recent)
-					recents_push(recent)
-				}
-			}
-			ImGui.EndMenu()
-		}
-		
-		ImGui.Separator()
-		
-		if ImGui.MenuItem("Save", "Ctrl+S")
-			menu_save()
-		if ImGui.MenuItem("Save As...", "Ctrl+Shift+S")
-			menu_save_as()
-		
-		ImGui.Separator()
-		if ImGui.MenuItem("Quit")
-			game_end()
-			
-		ImGui.EndMenu()
-	}
-	
-	if ImGui.BeginMenu("Windows")
-	{
-		if ImGui.MenuItem("Object Picker", undefined, windows.objectpicker)
-			windows.objectpicker = !windows.objectpicker
-		if ImGui.MenuItem("Layer List", undefined, windows.layerlist)
-			windows.layerlist = !windows.layerlist
-		if ImGui.MenuItem("Inspector", undefined, windows.inspector)
-			windows.inspector = !windows.inspector
-		if ImGui.MenuItem("Grid Size", undefined, windows.gridsize)
-			windows.gridsize = !windows.gridsize
-		ImGui.EndMenu()
-	}
-	
-	if ImGui.BeginMenu("Help")
-	{
-		if ImGui.MenuItem("ImGui Demo Window", undefined, showDemoWindow)
-			showDemoWindow = !showDemoWindow
-		if ImGui.MenuItem("About ImGui...")
-			showImGuiAboutWindow = !showImGuiAboutWindow
-		
-		ImGui.Separator()
-		if ImGui.MenuItem("About Room Factory...")
-			showAboutWindow = !showAboutWindow
-		
-		ImGui.EndMenu()
-	}
-	
-	ImGui.EndMainMenuBar()
-	ImGui.PopStyleVar()
-}
-
 function ui_aboutwindow()
 {
 	if !showAboutWindow
@@ -140,10 +17,14 @@ function ui_aboutwindow()
 		ImGui.Text("A room editor for GameMaker games")
 		
 		ImGui.Separator()
-		ImGui.Text(concat("Version ", GM_version))
+		ImGui.Text($"Version {GM_version}")
 		
 		if ImGui.Button("OK", BUTTON_WIDTH, BUTTON_HEIGHT)
 			showAboutWindow = false
+			
+		ImGui.SameLine()
+		if ImGui.Button("GitHub", BUTTON_WIDTH, BUTTON_HEIGHT)
+			url_open("https://github.com/basiccube/RoomFactory")
 	}
 	
 	ImGui.End()
@@ -163,7 +44,7 @@ function ui_gridsize()
 					
 	if ImGui.Begin("Grid Size", true, window_flags)
 	{
-		ImGui.Text(concat("Grid Size: ", gridSize))
+		ImGui.Text($"Grid Size: {gridSize}")
 		
 		ImGui.SameLine()
 		if ImGui.Button("+", 20, 20)
@@ -175,7 +56,11 @@ function ui_gridsize()
 			
 		ImGui.SameLine()
 		if ImGui.Button("/", 20, 20)
+		{
 			gridSize = 16
+			if struct_exists(global.config.roomDefaults, "gridSize")
+				gridSize = global.config.roomDefaults.gridSize
+		}
 		
 		ImGui.End()
 	}
@@ -214,7 +99,7 @@ function ui_objectpicker()
 				var cat = objects[i]
 				if ImGui.BeginTabItem(cat.name)
 				{
-					if ImGui.BeginListBox(concat("##", cat.name, " list"), 238, 256)
+					if ImGui.BeginListBox($"## {cat.name} list", 238, 256)
 					{
 						for (var j = 0, m = array_length(cat.objects); j < m; j++)
 						{
@@ -272,7 +157,7 @@ function ui_layerlist()
 	{
 		ImGui.Text("Layer List")
 		ImGui.Separator()
-		ImGui.Text(concat("Current layer: ", config_get_current_layer().displayName))
+		ImGui.Text($"Current layer: {config_get_current_layer().displayName}")
 		
 		var arr = config_get_layers()
 		if ImGui.BeginListBox("##Layer Listbox", 192)
@@ -292,7 +177,7 @@ function ui_layerlist()
 				var selected = (arr[i].name == currentLayer)
 				if ImGui.Selectable(arr[i].displayName, selected)
 				{
-					selectedObject = undefined
+					selectionArray = []
 					currentLayer = arr[i].name
 				}
 					
@@ -312,6 +197,8 @@ function ui_layerlist()
 #macro VARTYPE_STRING "string"
 
 global.varTypes = [VARTYPE_DEFAULT, VARTYPE_BOOL, VARTYPE_NUMBER, VARTYPE_STRING]
+
+#macro INSPECTOR_CONTROL_WIDTH 224
 
 function ui_inspector()
 {
@@ -335,8 +222,10 @@ function ui_inspector()
 		ImGui.Text("Inspector")
 		ImGui.Separator()
 		
-		if (selectedObject != undefined)
+		if (array_length(selectionArray) > 0 && !isMultiSelection() && !is_undefined(selectionArray[0]))
 		{
+			var selectedObject = selectionArray[0]
+			
 			ImGui.Text(selectedObject.objectID)
 			ImGui.NewLine()
 			
@@ -540,28 +429,28 @@ function ui_inspector()
 			
 			if (obj_roomManager.roomFormat == ROOMFORMAT_CYOP)
 			{
-				ImGui.SetNextItemWidth(224)
+				ImGui.SetNextItemWidth(INSPECTOR_CONTROL_WIDTH)
 				var offx = ImGui.DragInt("X", obj_roomManager.cyopRoomInfo.offsetX)
 				obj_roomManager.cyopRoomInfo.offsetX = offx
 			
-				ImGui.SetNextItemWidth(224)
+				ImGui.SetNextItemWidth(INSPECTOR_CONTROL_WIDTH)
 				var offy = ImGui.DragInt("Y", obj_roomManager.cyopRoomInfo.offsetY)
 				obj_roomManager.cyopRoomInfo.offsetY = offy
 			}
 			else
 			{
-				ImGui.SetNextItemWidth(224)
+				ImGui.SetNextItemWidth(INSPECTOR_CONTROL_WIDTH)
 				var title = ImGui.InputText("Title", obj_roomManager.roomInfo.title)
 				obj_roomManager.roomInfo.title = title
 			}
 			
 			ImGui.Separator()
 			
-			ImGui.SetNextItemWidth(224)
+			ImGui.SetNextItemWidth(INSPECTOR_CONTROL_WIDTH)
 			var width = ImGui.DragInt("Width", obj_roomManager.roomInfo.width)
 			obj_roomManager.roomInfo.width = max(width, global.config.roomDefaults.width)
 			
-			ImGui.SetNextItemWidth(224)
+			ImGui.SetNextItemWidth(INSPECTOR_CONTROL_WIDTH)
 			var height = ImGui.DragInt("Height", obj_roomManager.roomInfo.height)
 			obj_roomManager.roomInfo.height = max(height, global.config.roomDefaults.height)
 		}
@@ -582,7 +471,7 @@ function ui_configpicker()
 	
 	if (show & ImGuiReturnMask.Return)
 	{
-		ImGui.Text("Welcome to Room Factory version " + GM_version)
+		ImGui.Text($"Welcome to Room Factory version {GM_version}")
 		ImGui.Separator()
 		
 		ImGui.Text("Select a game configuration:")
@@ -644,58 +533,4 @@ function ui_configpicker()
 	}
 	
 	ImGui.End()
-}
-
-function ui_errormessage()
-{
-	ImGui.SetNextWindowPos(room_width / 2, room_height / 2, ImGuiCond.Always, 0.5, 0.5)
-	
-	if ImGui.BeginPopup("Error", ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoResize)
-	{
-		ImGui.Text("Error")
-		ImGui.Separator()
-	
-		ImGui.Text(errorText)
-		if (errorText2 != "")
-			ImGui.Text(errorText2)
-	
-		ImGui.NewLine()
-		if ImGui.Button("OK", BUTTON_WIDTH, BUTTON_HEIGHT)
-			ImGui.CloseCurrentPopup()
-		ImGui.EndPopup()
-	}
-	
-	if showError
-	{
-		ImGui.OpenPopup("Error")
-		showError = false
-	}
-}
-
-function error_message(str, str2 = "")
-{
-	with (obj_mainUI)
-	{
-		errorText = str
-		errorText2 = str2
-		showError = true
-	}
-}
-
-function update_titlebar()
-{
-	var rftitle = "Room Factory"
-	var str = rftitle
-	if (is_undefined(global.roomPath) || global.roomPath == "")
-		str = concat("[Untitled] - ", rftitle)
-	else
-		str = concat("[", filename_change_ext(filename_name(global.roomPath), ""), "] - ", rftitle)
-		
-	window_set_caption(str)
-}
-
-function draw_mouse_tooltip(offx, offy, str)
-{
-	draw_set_font(mainFont)
-	draw_text(realmouse_x + offx, realmouse_y + offy, str)
 }

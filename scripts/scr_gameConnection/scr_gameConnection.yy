@@ -1,9 +1,9 @@
 {
   "$GMScript":"v1",
-  "%Name":"scr_mainUI",
+  "%Name":"scr_gameConnection",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"scr_mainUI",
+  "name":"scr_gameConnection",
   "parent":{
     "name":"RoomFactory",
     "path":"RoomFactory.yyp",

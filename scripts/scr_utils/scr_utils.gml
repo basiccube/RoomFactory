@@ -24,6 +24,16 @@ function func_empty()
 	
 }
 
+function instance_destroy_array(arr)
+{
+	for (var i = 0, n = array_length(arr); i < n; i++)
+	{
+		var inst = arr[i]
+		if instance_exists(inst)
+			instance_destroy(inst)
+	}
+}
+
 function file_text_read_all(file)
 {
     if is_string(file)

@@ -1,4 +1,5 @@
-delete dragPos;
+delete multiSelectStartPos;
+
 delete resizeInitialSize;
 delete resizeSpriteOffset;
 
