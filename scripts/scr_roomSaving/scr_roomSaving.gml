@@ -194,6 +194,7 @@ function load_room(path)
 	
 	print("Room loaded")
 	global.roomPath = path
+	obj_roomManager.verifyInfo()
 	update_titlebar()
 	
 	return true;

@@ -352,6 +352,67 @@ function config_get_file_filter()
 	}
 }
 
+function config_get_music_title(musID)
+{
+	for (var i = 0, n = array_length(global.config.music); i < n; i++)
+	{
+		var mus = global.config.music[i]
+		for (var j = 0, m = array_length(mus.list); j < m; j++)
+		{
+			var item = mus.list[j]
+			if (item.name == musID)
+				return item.displayName;
+		}
+	}
+	
+	return "";
+}
+
+function config_get_object_variables(data)
+{
+	var arr = []
+	
+	if struct_exists(data, "variables")
+	{
+		arr = variable_clone(data.variables)
+		for (var i = 0, n = array_length(arr); i < n; i++)
+		{
+			var v = arr[i]
+			if !is_string(v)
+				continue;
+			if !struct_exists(global.config, v)
+				continue;
+				
+			var nv = variable_clone(global.config[$ v])
+			array_delete(arr, i, 1)
+				
+			i--
+			n--
+				
+			var arrc = array_concat(arr, nv)
+			arr = arrc
+		}
+	}
+		
+	// check if this object is in the base variable blacklist first
+	var inBlacklist = false
+	if struct_exists(global.config, "baseVariableBlacklist")
+	{
+		if array_contains(global.config[$ "baseVariableBlacklist"], data.id)
+			inBlacklist = true
+	}
+			
+	// base variables that all objects not in the blacklist will have
+	if (!inBlacklist && struct_exists(global.config, "baseVariables"))
+	{
+		var basearr = variable_clone(global.config[$ "baseVariables"])
+		var arrc = array_concat(arr, basearr)
+		arr = arrc
+	}
+	
+	return arr;
+}
+
 ///@param {Real} x
 ///@param {Real} y
 ///@param {String, ID.Layer} layer
@@ -363,44 +424,7 @@ function create_room_object(ox, oy, olayer, odata)
 	{
 		oid = id
 		objectID = odata.id
-		
-		if struct_exists(odata, "variables")
-		{
-			variables = variable_clone(odata.variables)
-			for (var i = 0, n = array_length(variables); i < n; i++)
-			{
-				var v = variables[i]
-				if !is_string(v)
-					continue;
-				if !struct_exists(global.config, v)
-					continue;
-				
-				var nv = variable_clone(global.config[$ v])
-				array_delete(variables, i, 1)
-				
-				i--
-				n--
-				
-				var arr = array_concat(variables, nv)
-				variables = arr
-			}
-		}
-		
-		// check if this object is in the base variable blacklist first
-		var inBlacklist = false
-		if struct_exists(global.config, "baseVariableBlacklist")
-		{
-			if array_contains(global.config[$ "baseVariableBlacklist"], objectID)
-				inBlacklist = true
-		}
-			
-		// base variables that all objects not in the blacklist will have
-		if (!inBlacklist && struct_exists(global.config, "baseVariables"))
-		{
-			var basearr = variable_clone(global.config[$ "baseVariables"])
-			var arr = array_concat(variables, basearr)
-			variables = arr
-		}
+		variables = config_get_object_variables(odata)
 		
 		if struct_exists(odata, "allowResize")
 			canResize = odata.allowResize

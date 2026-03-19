@@ -405,6 +405,13 @@ function ui_inspector()
 				ImGui.EndListBox()
 			}
 			
+			if ImGui.Button("Reset", BUTTON_WIDTH, BUTTON_HEIGHT)
+			{
+				var objdata = config_get_objectdata(selectedObject.objectID, config_get_current_layer().name)
+				if !is_undefined(objdata)
+					selectedObject.variables = config_get_object_variables(objdata)
+			}
+			
 			ImGui.NewLine()
 			
 			if ImGui.Button("Delete", BUTTON_WIDTH, BUTTON_HEIGHT)
@@ -453,6 +460,35 @@ function ui_inspector()
 			ImGui.SetNextItemWidth(INSPECTOR_CONTROL_WIDTH)
 			var height = ImGui.DragInt("Height", obj_roomManager.roomInfo.height)
 			obj_roomManager.roomInfo.height = max(height, global.config.roomDefaults.height)
+			
+			ImGui.Separator()
+			
+			ImGui.SetNextItemWidth(INSPECTOR_CONTROL_WIDTH)
+			if ImGui.BeginCombo("Music", obj_roomManager.musicTitle, 0)
+			{
+				for (var i = 0, n = array_length(global.config.music); i < n; i++)
+				{
+					var mus = global.config.music[i]
+					if ImGui.CollapsingHeader(mus.header)
+					{
+						for (var j = 0, m = array_length(mus.list); j < m; j++)
+						{
+							var item = mus.list[j]
+							var selected = (obj_roomManager.roomInfo.music == item.name)
+							
+							if ImGui.Selectable(item.displayName, selected)
+							{
+								obj_roomManager.musicTitle = item.displayName
+								obj_roomManager.roomInfo.music = item.name
+							}
+							
+							if selected
+								ImGui.SetItemDefaultFocus()
+						}
+					}
+				}
+				ImGui.EndCombo()
+			}
 		}
 		
 		ImGui.End()

@@ -10,6 +10,159 @@
 		"gridSize" : 16
 	},
 	
+	"music" : [
+		{
+			"header" : "Entrance Hall",
+			"list" : [
+				{
+					"name" : "mu_cityRooftops",
+					"displayName" : "Boiler City (Dynamite Man)"
+				},
+				{
+					"name" : "mu_cityUnderground",
+					"displayName" : "Boiler City (Terminal Eviction)"
+				},
+				{
+					"name" : "mu_theApartment",
+					"displayName" : "Boiler City (Apartment)"
+				},
+				{
+					"name" : "mu_citySecret",
+					"displayName" : "Boiler City (Secret)"
+				}
+			]
+		},
+		{
+			"header" : "East Wing",
+			"list" : [
+				{
+					"name" : "mu_sewerIndustrial",
+					"displayName" : "Slowroast Sewer (The Hammer & The Mace)"
+				},
+				{
+					"name" : "mu_sewerUtility",
+					"displayName" : "Slowroast Sewer (Hydroelectrickery)"
+				},
+				{
+					"name" : "mu_sewerUtility_quiet_TEMP",
+					"displayName" : "Slowroast Sewer (Hydroelectrickery) (Quiet)"
+				},
+				{
+					"name" : "mu_springsLayerA",
+					"displayName" : "Cinnamon Springs (Turnin' Up The Heat)"
+				},
+				{
+					"name" : "mu_springsLayerB",
+					"displayName" : "Cinnamon Springs (Gettin' Tighter)"
+				},
+				{
+					"name" : "mu_bombRockMain",
+					"displayName" : "Bomb Candy Mines (Electrofunk Central)"
+				},
+				{
+					"name" : "mu_bombRockOverlook",
+					"displayName" : "Bomb Candy Mines (The Children Yearn)"
+				},
+				{
+					"name" : "mu_jamCreepySilo_TEMP",
+					"displayName" : "Bomb Candy Mines (Afterhours)"
+				}
+			]
+		},
+		{
+			"header" : "West Wing",
+			"list" : [
+				{
+					"name" : "mu_bath",
+					"displayName" : "The Big Bath (Rub-a-dub Dub)"
+				},
+				{
+					"name" : "mu_jamLayerA",
+					"displayName" : "Concrete Jungle (Grindrail Gateway)"
+				},
+				{
+					"name" : "mu_jungleJungle",
+					"displayName" : "Concrete Jungle (Jungle Hitz)"
+				},
+				{
+					"name" : "mu_jamLayerC",
+					"displayName" : "Concrete Jungle (Jam Silo)"
+				},
+				{
+					"name" : "mu_mireA",
+					"displayName" : "Pinball Mire (Double or Nothin')"
+				},
+				{
+					"name" : "mu_mireB",
+					"displayName" : "Pinball Mire (Anton Insanity)"
+				}
+			]
+		},
+		{
+			"header" : "Top Floor",
+			"list" : [
+				{
+					"name" : "mu_mallInterior",
+					"displayName" : "The Mad Mall (A Few Roots, Replanted)"
+				},
+				{
+					"name" : "mu_mallHeist",
+					"displayName" : "The Mad Mall (Shop 'Til Ya Drop)"
+				},
+				{
+					"name" : "mu_factoryB",
+					"displayName" : "Crimson Factory (Smashin' Yer Head)"
+				},
+				{
+					"name" : "mu_factoryA",
+					"displayName" : "Crimson Factory (Artificial Reflection)"
+				},
+				{
+					"name" : "mu_glasshouseMain",
+					"displayName" : "The Mysterious Glasshouse (Idle Hands)"
+				},
+				{
+					"name" : "mu_glasshouseSlackjaw",
+					"displayName" : "The Mysterious Glasshouse (Who Turned Out the Lights?!)"
+				}
+			]
+		},
+		{
+			"header" : "Hell's Waiting Room",
+			"list" : [
+				{
+					"name" : "mu_gardens",
+					"displayName" : "Devilled Gardens (Hell of a Party)"
+				},
+				{
+					"name" : "mu_manor",
+					"displayName" : "Hell Manor (Takin' Back What's Mine)"
+				}
+			]
+		},
+		{
+			"header" : "Miscellaneous",
+			"list" : [
+				{
+					"name" : "mu_genericVB",
+					"displayName" : "Red House"
+				},
+				{
+					"name" : "mu_peanutPark",
+					"displayName" : "Peanut Park"
+				},
+				{
+					"name" : "mu_whineCellar",
+					"displayName" : "Exterminator's Handbook"
+				},
+				{
+					"name" : "mu_pauseMenu",
+					"displayName" : "Pause Menu"
+				}
+			]
+		}
+	],
+	
 	"baseVariables" : [
 		["kinematic", false, "default"],
 		["conserved", false, "default"]
