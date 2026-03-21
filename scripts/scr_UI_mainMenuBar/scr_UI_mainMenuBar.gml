@@ -125,6 +125,11 @@ function ui_mainmenubar()
 						recents_push(recent)
 					}
 				}
+				
+				ImGui.Separator()
+				if ImGui.MenuItem("Clear Recents")
+					recents_clear()
+				
 				ImGui.EndMenu()
 			}
 		

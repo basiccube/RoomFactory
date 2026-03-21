@@ -36,7 +36,7 @@ verifyInfo = function()
 		roomInfo.music = ""
 	musicTitle = config_get_music_title(roomInfo.music)
 	
-	if config_is_custom_music(roomInfo.music)
+	if (config_is_custom_music(roomInfo.music) && roomInfo.music != "")
 	{
 		musicTitle = "Custom"
 		customMusic = true

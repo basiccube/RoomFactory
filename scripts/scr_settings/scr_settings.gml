@@ -68,3 +68,8 @@ function recents_push(file)
 	array_insert(global.settings.recents, 0, file)
 	array_pop(global.settings.recents)
 }
+
+function recents_clear()
+{
+	global.settings.recents = array_create(MAX_RECENTS, undefined)
+}
