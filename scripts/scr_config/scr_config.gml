@@ -352,6 +352,22 @@ function config_get_file_filter()
 	}
 }
 
+function config_is_custom_music(musID)
+{
+	for (var i = 0, n = array_length(global.config.music); i < n; i++)
+	{
+		var mus = global.config.music[i]
+		for (var j = 0, m = array_length(mus.list); j < m; j++)
+		{
+			var item = mus.list[j]
+			if (item.name == musID)
+				return false;
+		}
+	}
+	
+	return true;
+}
+
 function config_get_music_title(musID)
 {
 	for (var i = 0, n = array_length(global.config.music); i < n; i++)

@@ -109,7 +109,8 @@ function save_room_cyop()
 		roomX : obj_roomManager.cyopRoomInfo.offsetX,
 		roomY : obj_roomManager.cyopRoomInfo.offsetY,
 		levelWidth : obj_roomManager.roomInfo.width,
-		levelHeight : obj_roomManager.roomInfo.height
+		levelHeight : obj_roomManager.roomInfo.height,
+		song : obj_roomManager.roomInfo.music
 	}
 	
 	rm.instances = []
@@ -339,12 +340,17 @@ function clear_room()
 		width = global.config.roomDefaults.width
 		height = global.config.roomDefaults.height
 		title = "Room Title"
+		music = ""
 	}
 	with (obj_roomManager.cyopRoomInfo)
 	{
 		offsetX = 0
 		offsetY = 0
 	}
+	
+	obj_roomManager.musicTitle = ""
+	obj_roomManager.customMusic = false
+	
 	obj_roomManager.version = 0
 	obj_camera.centerCamera()
 	

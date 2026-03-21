@@ -14,6 +14,7 @@ cyopRoomInfo = {
 }
 
 musicTitle = ""
+customMusic = false
 
 roomFormat = ROOMFORMAT_RF
 version = 0
@@ -34,4 +35,10 @@ verifyInfo = function()
 	if !struct_exists(roomInfo, "music")
 		roomInfo.music = ""
 	musicTitle = config_get_music_title(roomInfo.music)
+	
+	if config_is_custom_music(roomInfo.music)
+	{
+		musicTitle = "Custom"
+		customMusic = true
+	}
 }

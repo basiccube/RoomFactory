@@ -464,7 +464,7 @@ function ui_inspector()
 			ImGui.Separator()
 			
 			ImGui.SetNextItemWidth(INSPECTOR_CONTROL_WIDTH)
-			if ImGui.BeginCombo("Music", obj_roomManager.musicTitle, 0)
+			if ImGui.BeginCombo("Music", obj_roomManager.musicTitle, ImGuiComboFlags.HeightLarge)
 			{
 				for (var i = 0, n = array_length(global.config.music); i < n; i++)
 				{
@@ -480,6 +480,7 @@ function ui_inspector()
 							{
 								obj_roomManager.musicTitle = item.displayName
 								obj_roomManager.roomInfo.music = item.name
+								obj_roomManager.customMusic = false
 							}
 							
 							if selected
@@ -487,7 +488,28 @@ function ui_inspector()
 						}
 					}
 				}
+				
+				ImGui.Separator()
+				if ImGui.Selectable("Custom", obj_roomManager.customMusic)
+				{
+					if !obj_roomManager.customMusic
+					{
+						obj_roomManager.roomInfo.music = ""
+						obj_roomManager.customMusic = true
+					}
+					obj_roomManager.musicTitle = "Custom"
+				}
+				
+				if obj_roomManager.customMusic
+					ImGui.SetItemDefaultFocus()
+				
 				ImGui.EndCombo()
+			}
+			
+			if obj_roomManager.customMusic
+			{
+				ImGui.SetNextItemWidth(INSPECTOR_CONTROL_WIDTH)
+				obj_roomManager.roomInfo.music = ImGui.InputText("Music Path", obj_roomManager.roomInfo.music)
 			}
 		}
 		
