@@ -38,7 +38,7 @@ function update_titlebar(edited = false)
 {
 	var rftitle = "Room Factory"
 	var filestr = "Untitled"
-	if (!is_undefined(global.roomPath) && global.roomPath != "")
+	if ROOM_IS_OPEN
 		filestr = filename_change_ext(filename_name(global.roomPath), "")
 	
 	var str = $"[{edited ? "*" : ""}{filestr}] - {rftitle}"

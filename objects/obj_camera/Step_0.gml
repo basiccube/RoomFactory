@@ -1,6 +1,8 @@
 updateCamera()
 if obj_mainUI.showConfigPicker
 	exit;
+if (obj_levelManager.isOpen() && !ROOM_IS_OPEN)
+	exit;
 
 if INPUT_USED_UI
 {

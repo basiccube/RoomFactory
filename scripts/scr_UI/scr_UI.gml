@@ -428,7 +428,7 @@ function ui_inspector()
 		{
 			// room settings
 			var rmstr = "Untitled"
-			if (!is_undefined(global.roomPath) && global.roomPath != "")
+			if ROOM_IS_OPEN
 				rmstr = filename_change_ext(filename_name(global.roomPath), "")
 			
 			ImGui.Text(rmstr)
@@ -509,7 +509,27 @@ function ui_inspector()
 			if obj_roomManager.customMusic
 			{
 				ImGui.SetNextItemWidth(INSPECTOR_CONTROL_WIDTH)
-				obj_roomManager.roomInfo.music = ImGui.InputText("Music Path", obj_roomManager.roomInfo.music)
+				if obj_levelManager.isOpen()
+				{
+					if ImGui.BeginCombo("##Custom Music", obj_roomManager.roomInfo.music, ImGuiComboFlags.None)
+					{
+						for (var i = 0, n = array_length(obj_levelManager.musicList); i < n; i++)
+						{
+							var mus = obj_levelManager.musicList[i]
+							var selected = (obj_roomManager.roomInfo.music == mus)
+							
+							if ImGui.Selectable(mus, selected)
+								obj_roomManager.roomInfo.music = mus
+							
+							if selected
+								ImGui.SetItemDefaultFocus()
+						}
+						
+						ImGui.EndCombo()
+					}
+				}
+				else
+					obj_roomManager.roomInfo.music = ImGui.InputText("##Music Path", obj_roomManager.roomInfo.music)
 			}
 		}
 		

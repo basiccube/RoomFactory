@@ -343,12 +343,25 @@ function config_get_object_sprite(object)
 
 function config_get_file_filter()
 {
+	static create_filter_struct = function(rm, rmext, lvl, lvlext)
+	{
+		return {
+			room : rm,
+			room_ext : rmext,
+	
+			level : lvl,
+			level_ext : lvlext,
+	
+			combined : rm + "|" + lvl
+		};
+	}
+	
 	switch obj_roomManager.roomFormat
 	{
 		case ROOMFORMAT_RF:
-			return [ROOM_FILTER, ROOM_EXTENSION];
+			return create_filter_struct(ROOM_FILTER, ROOM_EXTENSION, LEVEL_FILTER, LEVEL_EXTENSION);
 		case ROOMFORMAT_CYOP:
-			return [ROOM_FILTER_CYOP, ROOM_EXTENSION_CYOP];
+			return create_filter_struct(ROOM_FILTER_CYOP, ROOM_EXTENSION_CYOP, LEVEL_FILTER_CYOP, LEVEL_EXTENSION_CYOP);
 	}
 }
 

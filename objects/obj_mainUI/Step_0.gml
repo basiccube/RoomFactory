@@ -4,6 +4,8 @@ if showConfigPicker
 	ui_errormessage()
 	exit;
 }
+if (obj_levelManager.isOpen() && !ROOM_IS_OPEN)
+	exit;
 
 ui_mainmenubar()
 ui_objectpicker()

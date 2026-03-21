@@ -1,8 +1,13 @@
 #macro ROOM_VERSION 1
+
 #macro ROOM_EXTENSION ".rfrm"
 #macro ROOM_EXTENSION_CYOP ".json"
+
 #macro ROOM_FILTER "Room Factory room (*.rfrm)|*.rfrm"
 #macro ROOM_FILTER_CYOP "CYOP room (*.json)|*.json"
+
+#macro ROOM_IS_OPEN (!is_undefined(global.roomPath) && global.roomPath != "")
+
 global.roomPath = undefined
 
 ///@param {String} path
@@ -11,8 +16,8 @@ function save_room(path = undefined)
 	if (is_undefined(path) || path == "")
 	{
 		var filter = config_get_file_filter()
-		path = get_save_filename_ext(filter[0],
-									concat("room", filter[1]),
+		path = get_save_filename_ext(filter.room,
+									concat("room", filter.room_ext),
 									working_directory,
 									"Save Room")
 	}
@@ -168,7 +173,7 @@ function load_room(path)
 	}
 	
 	var filter = config_get_file_filter()
-	if (filename_ext(path) != filter[1])
+	if (filename_ext(path) != filter.room_ext)
 	{
 		var errstr = "Incorrect room format for current game configuration"
 		error_message(errstr)

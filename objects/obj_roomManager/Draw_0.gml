@@ -1,5 +1,7 @@
 if obj_mainUI.showConfigPicker
 	exit;
+if (obj_levelManager.isOpen() && !ROOM_IS_OPEN)
+	exit;
 
 // draw grid
 var gsize = obj_mainUI.gridSize
