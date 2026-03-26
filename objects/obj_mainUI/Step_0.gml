@@ -1,7 +1,6 @@
 if showConfigPicker
 {
 	ui_configpicker()
-	ui_errormessage()
 	exit;
 }
 if (obj_levelManager.isOpen() && !ROOM_IS_OPEN)
@@ -13,7 +12,6 @@ ui_layerlist()
 ui_inspector()
 ui_gridsize()
 ui_aboutwindow()
-ui_errormessage()
 menu_handle_shortcuts()
 
 if showDemoWindow

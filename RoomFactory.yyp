@@ -17,6 +17,7 @@
   "IncludedFiles":[
     {"$GMIncludedFile":"","%Name":"ANTONBLAST-Config.rfcfg","CopyToMask":-1,"filePath":"datafiles/configs","name":"ANTONBLAST-Config.rfcfg","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"CYOP-Config.rfcfg","CopyToMask":-1,"filePath":"datafiles/configs","name":"CYOP-Config.rfcfg","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
+    {"$GMIncludedFile":"","%Name":"HasteFactory-Config.rfcfg","CopyToMask":-1,"filePath":"datafiles/configs","name":"HasteFactory-Config.rfcfg","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"cyoptest.json","CopyToMask":-1,"filePath":"datafiles","name":"cyoptest.json","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"OpenSans_Condensed-Bold.ttf","CopyToMask":-1,"filePath":"datafiles/fonts","name":"OpenSans_Condensed-Bold.ttf","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"OpenSans_Condensed-BoldItalic.ttf","CopyToMask":-1,"filePath":"datafiles/fonts","name":"OpenSans_Condensed-BoldItalic.ttf","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
@@ -55,6 +56,7 @@
     {"$GMIncludedFile":"","%Name":"OpenSans-Regular.ttf","CopyToMask":-1,"filePath":"datafiles/fonts","name":"OpenSans-Regular.ttf","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"OpenSans-SemiBold.ttf","CopyToMask":-1,"filePath":"datafiles/fonts","name":"OpenSans-SemiBold.ttf","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"OpenSans-SemiBoldItalic.ttf","CopyToMask":-1,"filePath":"datafiles/fonts","name":"OpenSans-SemiBoldItalic.ttf","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
+    {"$GMIncludedFile":"","%Name":"imgbase64.py","CopyToMask":-1,"filePath":"datafiles","name":"imgbase64.py","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"gml-oop_license.txt","CopyToMask":-1,"filePath":"datafiles/licenses","name":"gml-oop_license.txt","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"ImGui_GM-license.txt","CopyToMask":-1,"filePath":"datafiles/licenses","name":"ImGui_GM-license.txt","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"imgui-license.txt","CopyToMask":-1,"filePath":"datafiles/licenses","name":"imgui-license.txt","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
@@ -62,7 +64,7 @@
   "isEcma":false,
   "LibraryEmitters":[],
   "MetaData":{
-    "IDEVersion":"2024.14.3.217",
+    "IDEVersion":"2024.14.4.221",
   },
   "name":"RoomFactory",
   "resources":[

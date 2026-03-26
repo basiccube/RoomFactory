@@ -106,8 +106,8 @@ function levelManager_tabs()
 					{
 						if ImGui.Selectable("Edit##" + string(i))
 						{
-							load_room(roomPath + roomList[i])
-							showManagerWindow = false
+							if load_room(roomPath + roomList[i])
+								showManagerWindow = false
 						}
 						if ImGui.Selectable("Rename##" + string(i))
 						{

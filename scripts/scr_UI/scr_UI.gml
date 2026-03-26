@@ -463,8 +463,10 @@ function ui_inspector()
 			
 			ImGui.Separator()
 			
+			var useCustomAnyway = !variable_struct_exists(global.config, "music")
+			
 			ImGui.SetNextItemWidth(INSPECTOR_CONTROL_WIDTH)
-			if ImGui.BeginCombo("Music", obj_roomManager.musicTitle, ImGuiComboFlags.HeightLarge)
+			if (!useCustomAnyway && ImGui.BeginCombo("Music", obj_roomManager.musicTitle, ImGuiComboFlags.HeightLarge))
 			{
 				for (var i = 0, n = array_length(global.config.music); i < n; i++)
 				{
@@ -506,7 +508,7 @@ function ui_inspector()
 				ImGui.EndCombo()
 			}
 			
-			if obj_roomManager.customMusic
+			if (obj_roomManager.customMusic || useCustomAnyway)
 			{
 				ImGui.SetNextItemWidth(INSPECTOR_CONTROL_WIDTH)
 				if obj_levelManager.isOpen()
@@ -529,7 +531,7 @@ function ui_inspector()
 					}
 				}
 				else
-					obj_roomManager.roomInfo.music = ImGui.InputText("##Music Path", obj_roomManager.roomInfo.music)
+					obj_roomManager.roomInfo.music = ImGui.InputText(useCustomAnyway ? "Music" : "##Music Path", obj_roomManager.roomInfo.music)
 			}
 		}
 		
