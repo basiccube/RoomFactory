@@ -367,6 +367,9 @@ function config_get_file_filter()
 
 function config_is_custom_music(musID)
 {
+	if !variable_struct_exists(global.config, "music")
+		return false;
+	
 	for (var i = 0, n = array_length(global.config.music); i < n; i++)
 	{
 		var mus = global.config.music[i]
@@ -383,6 +386,9 @@ function config_is_custom_music(musID)
 
 function config_get_music_title(musID)
 {
+	if !variable_struct_exists(global.config, "music")
+		return "";
+	
 	for (var i = 0, n = array_length(global.config.music); i < n; i++)
 	{
 		var mus = global.config.music[i]
