@@ -8,12 +8,13 @@
 #macro CONFIG_LAYER_ASSET "asset"
 
 global.config = {}
-global.configSprites = ds_map_create()
+global.configFileName = ""
+global.spriteCache = ds_map_create()
 
 ///@param {String} name
 function config_load(name)
 {
-	var path = concat(CONFIG_PATH, name)
+	var path = $"{CONFIG_PATH}{name}"
 	if !file_exists(path)
 		return false;
 	
@@ -33,19 +34,20 @@ function config_load(name)
 		var err = $"Invalid config version, expected {CONFIG_VERSION}, got {json.rf_configversion}"
 		error_message(errstr, err)
 		
-		print($"Invalid config version, expected {CONFIG_VERSION}, got {json.rf_configversion}")
+		print(err)
 		return false;
 	}
 	
 	global.config = json
+	global.configFileName = name
 	print($"Loaded config {json.name} version {json.version}, format version {json.rf_configversion}")
 	
 	obj_roomManager.roomFormat = ROOMFORMAT_RF
 	if struct_exists(json, "roomFormat")
 		obj_roomManager.roomFormat = json.roomFormat
-	
 	print($"Config room format : {obj_roomManager.roomFormat}")
 		
+	ConfigAssetSprites.FindConfigSprites()
 	obj_mainUI.currentLayer = config_find_instance_layer().name
 	return true;
 }
@@ -60,18 +62,22 @@ function config_unload()
 	
 	print($"Unloading config {global.config.name}")
 	delete global.config;
-	global.config = {}
 	
-	var key = ds_map_find_first(global.configSprites)
-	for (var i = 0, n = ds_map_size(global.configSprites); i < n; i++)
+	global.config = {}
+	global.configFileName = ""
+	
+	print("Clearing sprite cache")
+	var key = ds_map_find_first(global.spriteCache)
+	for (var i = 0, n = ds_map_size(global.spriteCache); i < n; i++)
 	{
-		var val = ds_map_find_value(global.configSprites, key)
+		var val = ds_map_find_value(global.spriteCache, key)
 		if sprite_exists(val)
 			sprite_delete(val)
 		
-		key = ds_map_find_next(global.configSprites, key)
+		key = ds_map_find_next(global.spriteCache, key)
 	}
-	ds_map_clear(global.configSprites)
+	ds_map_clear(global.spriteCache)
+	ConfigAssetSprites.ClearSprites()
 	
 	obj_mainUI.currentLayer = undefined
 	return true;
@@ -168,6 +174,13 @@ function config_find_instance_layer()
 	
 	print("Can't find any instance layers defined in the current configuration")
 	return undefined;
+}
+
+function config_get_layer_type()
+{
+	var lay = config_get_current_layer()
+	if !is_undefined(lay)
+		return lay.type;
 }
 
 function config_get_objects()
@@ -298,14 +311,14 @@ function config_get_object_sprite(object)
 {
 	if is_string(object)
 	{
-		var spr = ds_map_find_value(global.configSprites, object)
+		var spr = ds_map_find_value(global.spriteCache, object)
 		if (spr != undefined)
 			return spr;
 		
 		return undefined;
 	}
 	
-	var spr = ds_map_find_value(global.configSprites, object[$ "id"])
+	var spr = ds_map_find_value(global.spriteCache, object[$ "id"])
 	if (spr != undefined)
 		return spr;
 	
@@ -315,7 +328,7 @@ function config_get_object_sprite(object)
 		print("Using generated sprite instead...")
 		
 		var gspr = create_placeholder_sprite(global.config.roomDefaults.gridSize)
-		ds_map_set(global.configSprites, object[$ "id"], gspr)
+		ds_map_set(global.spriteCache, object[$ "id"], gspr)
 		
 		return gspr;
 	}
@@ -337,7 +350,7 @@ function config_get_object_sprite(object)
 		sprite_set_bbox(s, bbox[0], bbox[1], bbox[2], bbox[3])
 	}
 	
-	ds_map_set(global.configSprites, object[$ "id"], s)
+	ds_map_set(global.spriteCache, object[$ "id"], s)
 	return s;
 }
 

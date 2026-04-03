@@ -17,7 +17,7 @@ function save_room(path = undefined)
 	{
 		var filter = config_get_file_filter()
 		path = get_save_filename_ext(filter.room,
-									concat("room", filter.room_ext),
+									$"room{filter.room_ext}",
 									working_directory,
 									"Save Room")
 	}
@@ -288,7 +288,7 @@ function load_room_cyop(json)
 		if inst.deleted
 			continue;
 		
-		var layName = concat("Instances_", inst.layer)
+		var layName = $"Instances_{inst.layer}"
 		if !layer_exists(layName)
 			layer_create(-inst.layer, layName)
 		

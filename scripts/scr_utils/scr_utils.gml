@@ -10,19 +10,7 @@ function print()
 	show_debug_message(_string)
 }
 
-function concat()
-{
-	var _string = ""
-	for (var i = 0; i < argument_count; i++)
-		_string += string(argument[i])
-	
-	return _string;
-}
-
-function func_empty()
-{
-	
-}
+function func_empty() { }
 
 function instance_destroy_array(arr)
 {

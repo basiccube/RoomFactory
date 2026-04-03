@@ -14,8 +14,8 @@ var str = ""
 if resizingObject
 {
 	var xscale = selectedObject.image_xscale
-	var yscale = selectedObject.image_yscale	
-	str = concat("X: ", xscale, ", Y: ", yscale)
+	var yscale = selectedObject.image_yscale
+	str = $"X: {xscale}, Y: {yscale}"
 }
 else if draggingObject
 {
@@ -33,8 +33,8 @@ else if draggingObject
 		x = px
 		y = py
 	}
-		
-	str = concat("X: ", ox, ", Y: ", oy)
+	
+	str = $"X: {ox}, Y: {oy}"
 }
 	
 draw_mouse_tooltip(0, 16, str)

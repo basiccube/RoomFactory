@@ -77,6 +77,8 @@ function ui_objectpicker()
 		exit;
 	if (layer_exists(obj_mainUI.currentLayer) && !layer_get_visible(obj_mainUI.currentLayer))
 		exit;
+	if (config_get_layer_type() != CONFIG_LAYER_INSTANCE)
+		exit;
 	
 	ImGui.SetNextWindowPos(10, 32, ImGuiCond.Always)
 	ImGui.SetNextWindowSizeConstraints(0, 0, 256, 340)
@@ -160,7 +162,7 @@ function ui_layerlist()
 		ImGui.Text($"Current layer: {config_get_current_layer().displayName}")
 		
 		var arr = config_get_layers()
-		if ImGui.BeginListBox("##Layer Listbox", 192)
+		if ImGui.BeginListBox("##Layer Listbox", 220, 160)
 		{
 			for (var i = 0, n = array_length(arr); i < n; i++)
 			{
@@ -277,10 +279,10 @@ function ui_inspector()
 								listval = floor(value)
 							break
 						case VARTYPE_STRING:
-							listval = concat("\"", value, "\"")
+							listval = $"\"{value}\""
 							break
 					}
-					var liststr = concat(name, " = ", listval, " ( ", type, " )")
+					var liststr = $"{name} = {listval} ( {type} )"
 					
 					if ImGui.Selectable(liststr)
 						ImGui.OpenPopup("varMenuPopup##" + string(i))
@@ -562,10 +564,10 @@ function ui_configpicker()
 		
 		if !searched
 		{
-			var file = file_find_first(concat(CONFIG_PATH, "*.rfcfg"), fa_none)
+			var file = file_find_first($"{CONFIG_PATH}*.rfcfg", fa_none)
 			while (file != "")
 			{
-				var jfile = file_text_read_all(concat(CONFIG_PATH, file))
+				var jfile = file_text_read_all($"{CONFIG_PATH}{file}")
 				var json = json_parse(jfile)
 				
 				array_push(searcharr, [file, json.name])
