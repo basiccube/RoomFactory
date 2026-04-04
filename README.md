@@ -16,7 +16,7 @@ If you want to try and make your own configuration file, then you should look at
 
 ## Credits
 
-* [ImGui_GM](https://github.com/nommiin/ImGui_GM)
+* [ImGM](https://github.com/knno/ImGM)
 * [ImGui](https://github.com/ocornut/imgui)
 * [GML-OOP](https://github.com/Mtax-Development/GML-OOP)
 
