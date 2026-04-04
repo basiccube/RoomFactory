@@ -4,8 +4,11 @@ if (INPUT_USED_UI || obj_camera.mouseDrag)
 x = mouse_x
 y = mouse_y
 
-var gsize = obj_mainUI.gridSize
-grid_snap(gsize, gsize)
+if obj_mainUI.snapToGrid
+{
+	var gsize = obj_mainUI.gridSize
+	grid_snap(gsize, gsize)
+}
 
 if mouse_check_button_released(mb_left)
 {

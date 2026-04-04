@@ -7,7 +7,7 @@ if (obj_levelManager.isOpen() && !ROOM_IS_OPEN)
 	exit;
 
 ui_mainmenubar()
-ui_objectpicker()
+ui_layertypes()
 ui_layerlist()
 ui_inspector()
 ui_gridsize()
@@ -91,7 +91,8 @@ if (lastObject != undefined && keyboard_check(vk_alt))
 		
 		x = mouse_x
 		y = mouse_y
-		grid_snap(gridSize, gridSize)
+		if snapToGrid
+			grid_snap(gridSize, gridSize)
 		
 		create_room_object(x, y, currentLayer, lastObject)
 		
@@ -262,7 +263,8 @@ else if resizingObject
 	
 	x = mouse_x
 	y = mouse_y
-	move_snap(gridSize, gridSize)
+	if snapToGrid
+		move_snap(gridSize, gridSize)
 	
 	// janky ass resizing code
 	switch resizeDir

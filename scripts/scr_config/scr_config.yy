@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"scr_config",
   "parent":{
-    "name":"RoomFactory",
-    "path":"RoomFactory.yyp",
+    "name":"Config",
+    "path":"folders/Config.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

@@ -10,8 +10,8 @@
   "name":"obj_windowManager",
   "overriddenProperties":[],
   "parent":{
-    "name":"RoomFactory",
-    "path":"RoomFactory.yyp",
+    "name":"User Interface",
+    "path":"folders/User Interface.yy",
   },
   "parentObjectId":null,
   "persistent":false,

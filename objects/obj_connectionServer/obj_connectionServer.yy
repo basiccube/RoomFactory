@@ -11,8 +11,8 @@
   "name":"obj_connectionServer",
   "overriddenProperties":[],
   "parent":{
-    "name":"RoomFactory",
-    "path":"RoomFactory.yyp",
+    "name":"Game Connection",
+    "path":"folders/Game Connection.yy",
   },
   "parentObjectId":null,
   "persistent":false,

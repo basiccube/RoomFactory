@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"scr_gameConnection",
   "parent":{
-    "name":"RoomFactory",
-    "path":"RoomFactory.yyp",
+    "name":"Game Connection",
+    "path":"folders/Game Connection.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

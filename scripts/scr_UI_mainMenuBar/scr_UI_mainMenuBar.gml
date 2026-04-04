@@ -2,14 +2,10 @@
 					clear_room()
 
 function is_level_file(str)
-{
-	return filename_ext(str) == config_get_file_filter().level_ext;
-}
+{ return filename_ext(str) == config_get_file_filter().level_ext; }
 
 function menu_new()
-{
-	clear_room()
-}
+{ clear_room(); }
 
 function menu_open()
 {
@@ -98,7 +94,7 @@ function ui_mainmenubar()
 			if ImGui.MenuItem("New", "Ctrl+N")
 				menu_new()
 			ImGui.Separator()
-		
+			
 			if ImGui.MenuItem("Open", "Ctrl+O")
 				menu_open()
 		
@@ -159,16 +155,24 @@ function ui_mainmenubar()
 		ImGui.EndMenu()
 	}
 	
-	if ImGui.BeginMenu("Windows")
+	if ImGui.BeginMenu("View")
 	{
-		if ImGui.MenuItem("Object Picker", undefined, windows.objectpicker)
-			windows.objectpicker = !windows.objectpicker
-		if ImGui.MenuItem("Layer List", undefined, windows.layerlist)
-			windows.layerlist = !windows.layerlist
-		if ImGui.MenuItem("Inspector", undefined, windows.inspector)
-			windows.inspector = !windows.inspector
-		if ImGui.MenuItem("Grid Size", undefined, windows.gridsize)
-			windows.gridsize = !windows.gridsize
+		if ImGui.MenuItem("Show Grid", undefined, drawGrid)
+			drawGrid = !drawGrid
+		
+		if ImGui.BeginMenu("Windows")
+		{
+			if ImGui.MenuItem("Layer-specific Window", undefined, windows.layertypes)
+				windows.layertypes = !windows.layertypes
+			if ImGui.MenuItem("Layer List", undefined, windows.layerlist)
+				windows.layerlist = !windows.layerlist
+			if ImGui.MenuItem("Inspector", undefined, windows.inspector)
+				windows.inspector = !windows.inspector
+			if ImGui.MenuItem("Grid Size", undefined, windows.gridsize)
+				windows.gridsize = !windows.gridsize
+			ImGui.EndMenu()
+		}
+		
 		ImGui.EndMenu()
 	}
 	

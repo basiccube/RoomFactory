@@ -17,8 +17,19 @@ function ConfigAssetSpriteData(sprName, sprPath, offX = 0, offY = 0) constructor
 	{
 		if !spriteLoaded
 		{
+			print($"Loading sprite {name}")
 			sprite = sprite_add(path, 1, false, false, offsetX, offsetY)
 			spriteLoaded = true
+		}
+	}
+	
+	static UnloadSprite = function()
+	{
+		if spriteLoaded
+		{
+			if sprite_exists(sprite)
+				sprite_delete(sprite)
+			spriteLoaded = false
 		}
 	}
 	
@@ -34,22 +45,26 @@ function ConfigAssetSpriteData(sprName, sprPath, offX = 0, offY = 0) constructor
 function ConfigAssetSprites() constructor
 {
 	static map = ds_map_create()
+	static categories = []
 	
 	///@param {String} name
 	static CreateCategory = function(name)
 	{
 		if !ds_map_exists(map, name)
+		{
 			ds_map_set(map, name, {})
+			array_push(categories, name)
+		}
 	}
 	
 	///@param {String} name
 	static CategoryExists = function(name)
-	{ return ds_map_exists(map, name); }
+	{ return array_contains(categories, name); }
 	
 	///@param {String} name
 	static GetCategory = function(name)
 	{
-		if !ds_map_exists(map, name)
+		if !array_contains(categories, name)
 		{
 			print($"Category {name} doesn't exist!")
 			return undefined;
@@ -70,7 +85,7 @@ function ConfigAssetSprites() constructor
 		cat[$ data.name] = data
 	}
 	
-	static ClearSprites = function()
+	static UnloadSprites = function()
 	{
 		var key = ds_map_find_first(map)
 		for (var i = 0, n = ds_map_size(map); i < n; i++)
@@ -78,14 +93,19 @@ function ConfigAssetSprites() constructor
 			var cat = ds_map_find_value(map, key)
 			struct_foreach(cat, function(name, value)
 			{
-				print($"Deleting sprite {name}")
-				if (value.spriteLoaded && sprite_exists(value.sprite))
-					sprite_delete(value.sprite)
+				print($"Unloading sprite {name}")
+				value.UnloadSprite()
 			})
 				
 			key = ds_map_find_next(map, key)
 		}
+	}
+	
+	static ClearSprites = function()
+	{
+		UnloadSprites()
 		ds_map_clear(map)
+		categories = []
 	}
 	
 	static FindConfigSprites = function()
@@ -114,8 +134,8 @@ function ConfigAssetSprites() constructor
 				var name = filename_change_ext(file, "")
 				var path = $"{dirPath}/{file}"
 				
-				if !ds_map_exists(map, dirName)
-					ds_map_set(map, dirName, {})
+				if !CategoryExists(dirName)
+					CreateCategory(dirName)
 				
 				var spriteData = new ConfigAssetSpriteData(name, path)
 				AddSpriteData(dirName, spriteData)

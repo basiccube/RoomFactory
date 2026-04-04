@@ -839,13 +839,6 @@
 	
 	"layers" : [
 		{
-			"name" : "InstancesFrontFG",
-			"displayName" : "Instances (Front) (FG)",
-			"depth" : 90,
-			"type" : "instance",
-			"objects" : "fgObjects"
-		},
-		{
 			"name" : "InstancesFG",
 			"displayName" : "Instances (FG)",
 			"depth" : 100,
@@ -853,10 +846,11 @@
 			"objects" : "fgObjects"
 		},
 		{
-			"name" : "AssetsFG",
-			"displayName" : "Assets (FG)",
-			"depth" : 100,
-			"type" : "asset"
+			"name" : "InstancesFrontFG",
+			"displayName" : "Instances (Front) (FG)",
+			"depth" : 90,
+			"type" : "instance",
+			"objects" : "fgObjects"
 		},
 		{
 			"name" : "InstancesBackFG",
@@ -864,6 +858,14 @@
 			"depth" : 110,
 			"type" : "instance",
 			"objects" : "fgObjects"
+		},
+		
+		{
+			"name" : "InstancesBG",
+			"displayName" : "Instances (BG)",
+			"depth" : 300,
+			"type" : "instance",
+			"objects" : "bgObjects"
 		},
 		{
 			"name" : "InstancesFrontBG",
@@ -873,18 +875,18 @@
 			"objects" : "bgObjects"
 		},
 		{
-			"name" : "InstancesBG",
-			"displayName" : "Instances (BG)",
-			"depth" : 300,
-			"type" : "instance",
-			"objects" : "bgObjects"
-		},
-		{
 			"name" : "InstancesBackBG",
 			"displayName" : "Instances (Back) (BG)",
 			"depth" : 310,
 			"type" : "instance",
 			"objects" : "bgObjects"
+		},
+		
+		{
+			"name" : "AssetsFG",
+			"displayName" : "Assets (FG)",
+			"depth" : 100,
+			"type" : "asset"
 		}
 	]
 }

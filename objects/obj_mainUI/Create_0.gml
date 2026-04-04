@@ -12,8 +12,9 @@ enum resizeType
 #macro KEYBOARD_USED_UI ImGui.WantKeyboardCapture()
 #macro INPUT_USED_UI (MOUSE_OVER_UI || KEYBOARD_USED_UI)
 
-ImGui.__Initialize()
-ImGui.AddFontFromFile(UI_MAINFONT, 16)
+imgm = __ImGM()
+ImGui.__Initialize(ImGuiConfigFlags.DockingEnable | ImGuiConfigFlags.ViewportsEnable)
+ImGui.AddFontFromFileTTF(UI_MAINFONT, 16)
 
 globalvar mainFont;
 mainFont = font_add(UI_MAINFONT, 10, false, false, 32, 128)
@@ -31,7 +32,7 @@ errorText2 = ""
 showError = false
 
 windows = {
-	objectpicker : true,
+	layertypes : true,
 	layerlist : true,
 	inspector : true,
 	gridsize : true,
@@ -41,6 +42,8 @@ gridSize = 16
 gridMaxSize = 32
 gridMinSize = 4
 gridIncrement = 4
+snapToGrid = true
+drawGrid = true
 
 selectionArray = []
 selectedVariableIndex = 0
@@ -100,9 +103,7 @@ releaseDraggedObject = function()
 		exit;
 	
 	array_foreach(dragPosArray, function(e, i)
-	{
-		delete e;
-	})
+	{ delete e; })
 	dragPosArray = []
 	
 	array_foreach(selectionArray, function(e, i)
@@ -110,7 +111,8 @@ releaseDraggedObject = function()
 		with (e)
 		{
 			image_alpha = 1
-			move_snap(other.gridSize, other.gridSize)
+			if other.snapToGrid
+				move_snap(other.gridSize, other.gridSize)
 		}
 	})
 	
@@ -118,9 +120,7 @@ releaseDraggedObject = function()
 }
 
 isMultiSelection = function()
-{
-	return (array_length(selectionArray) > 1);
-}
+{ return (array_length(selectionArray) > 1); }
 
 drawInstanceOutline = function(inst, color)
 {

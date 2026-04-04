@@ -33,7 +33,8 @@ if (lastObject != undefined && !INPUT_USED_UI && !window_mouse_get_locked() && k
 		
 	x = mouse_x
 	y = mouse_y
-	grid_snap(gridSize, gridSize)
+	if snapToGrid
+		grid_snap(gridSize, gridSize)
 	
 	var c = c_green
 	draw_rectangle_color(x, y, x + gridSize, y + gridSize, c, c, c, c, true)

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"__ImGM",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"__ImGM",
+  "parent":{
+    "name":"ImGM",
+    "path":"folders/Libraries/ImGM.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

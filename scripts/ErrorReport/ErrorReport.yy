@@ -6,7 +6,7 @@
   "name":"ErrorReport",
   "parent":{
     "name":"GML-OOP",
-    "path":"folders/GML-OOP.yy",
+    "path":"folders/Libraries/GML-OOP.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

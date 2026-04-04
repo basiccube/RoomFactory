@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"scr_UI",
   "parent":{
-    "name":"RoomFactory",
-    "path":"RoomFactory.yyp",
+    "name":"User Interface",
+    "path":"folders/User Interface.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",
