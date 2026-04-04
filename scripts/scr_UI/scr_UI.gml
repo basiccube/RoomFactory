@@ -1,5 +1,5 @@
-#macro BUTTON_WIDTH 80
-#macro BUTTON_HEIGHT 24
+#macro BUTTON_WIDTH (80 * settings.scale)
+#macro BUTTON_HEIGHT (24 * settings.scale)
 
 function ui_aboutwindow()
 {
@@ -20,7 +20,7 @@ function ui_aboutwindow()
 		ImGui.Text($"Version {GM_version}")
 		ImGui.TextLinkOpenURL("GitHub", "https://github.com/basiccube/RoomFactory")
 		
-		ImGui.SameLine(0, 128)
+		ImGui.SameLine(0, 128 * settings.scale)
 		if ImGui.Button("OK", BUTTON_WIDTH, BUTTON_HEIGHT)
 			showAboutWindow = false
 	}
@@ -28,7 +28,7 @@ function ui_aboutwindow()
 	ImGui.End()
 }
 
-#macro GRIDSIZE_BUTTON_SIZE 22
+#macro GRIDSIZE_BUTTON_SIZE (22 * settings.scale)
 
 function ui_gridsize()
 {
@@ -76,7 +76,7 @@ function ui_layerlist()
 	
 	if !config_loaded()
 		exit;
-	if instance_exists(obj_objectPlacer)
+	if instance_exists(obj_placer)
 		exit;
 	
 	ImGui.SetNextWindowPos(10, room_height - 8, ImGuiCond.Always, 0, 1)
@@ -93,7 +93,7 @@ function ui_layerlist()
 		ImGui.Text($"Current layer: {config_get_current_layer().displayName}")
 		
 		var arr = config_get_layers()
-		if ImGui.BeginListBox("##Layer Listbox", 220, 160)
+		if ImGui.BeginListBox("##Layer Listbox", 220 * settings.scale, 160 * settings.scale)
 		{
 			for (var i = 0, n = array_length(arr); i < n; i++)
 			{
@@ -161,7 +161,7 @@ function ui_configpicker()
 			searched = true
 		}
 		
-		if ImGui.BeginListBox("##Config Listbox", 300, 260)
+		if ImGui.BeginListBox("##Config Listbox", 300 * settings.scale, 260 * settings.scale)
 		{
 			for (var i = 0, n = array_length(searcharr); i < n; i++)
 			{

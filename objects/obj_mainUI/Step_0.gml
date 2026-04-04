@@ -12,6 +12,7 @@ ui_layerlist()
 ui_inspector()
 ui_gridsize()
 ui_aboutwindow()
+ui_settings()
 menu_handle_shortcuts()
 
 if showDemoWindow
@@ -102,7 +103,7 @@ if (lastObject != undefined && keyboard_check(vk_alt))
 }
 	
 // object selection
-if (mouse_check_button_pressed(mb_left) && !keyboard_check(vk_alt) && !instance_exists(obj_objectPlacer))
+if (mouse_check_button_pressed(mb_left) && !keyboard_check(vk_alt) && !instance_exists(obj_placer))
 {
 	if position_meeting(mouse_x, mouse_y, obj_roomObject)
 	{

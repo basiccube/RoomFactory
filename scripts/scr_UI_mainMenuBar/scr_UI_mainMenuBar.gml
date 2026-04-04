@@ -102,7 +102,7 @@ function ui_mainmenubar()
 			{
 				for (var i = 0; i < MAX_RECENTS; i++)
 				{
-					var recent = global.settings.recents[i]
+					var recent = settings.recents[i]
 					if is_undefined(recent)
 						continue;
 				
@@ -152,6 +152,13 @@ function ui_mainmenubar()
 		if ImGui.MenuItem("Quit")
 			game_end()
 			
+		ImGui.EndMenu()
+	}
+	
+	if ImGui.BeginMenu("Edit")
+	{
+		if ImGui.MenuItem("Preferences")
+			showSettings = true
 		ImGui.EndMenu()
 	}
 	

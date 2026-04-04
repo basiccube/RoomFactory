@@ -12,11 +12,11 @@ if obj_mainUI.snapToGrid
 
 if mouse_check_button_released(mb_left)
 {
-	var layinfo = config_get_layer(layerName)
-	if !layer_exists(layerName)
-		layer_create(layinfo.depth, layerName)
-	
-	create_room_object(x, y, layerName, objectData)
+	switch layerType
+	{
+		case CONFIG_LAYER_INSTANCE: objectPlace(); break;
+		case CONFIG_LAYER_ASSET: assetPlace(); break;
+	}
 	instance_destroy()
 }
 else if mouse_check_button_released(mb_right)

@@ -86,7 +86,7 @@ function levelManager_tabs()
 		if ImGui.BeginTabItem("Rooms")
 		{
 			static roomRenameFilename = ""
-			if ImGui.BeginListBox("##Rooms Listbox", 350, 250)
+			if ImGui.BeginListBox("##Rooms Listbox", 350 * settings.scale, 250 * settings.scale)
 			{
 				var stop = false
 				for (var i = 0, n = array_length(roomList); i < n; i++)
@@ -173,7 +173,8 @@ function levelManager_tabs()
 						break;
 				}
 				
-				if ImGui.Button("+", 20, 20)
+				var addSize = 20 * settings.scale
+				if ImGui.Button("+", addSize, addSize)
 				{
 					var len = array_length(roomList)
 					var prevRoom = global.roomPath
@@ -200,7 +201,7 @@ function levelManager_tabs()
 		if ImGui.BeginTabItem("Music")
 		{
 			static musicRenameFilename = ""
-			if ImGui.BeginListBox("##Music Listbox", 350, 250)
+			if ImGui.BeginListBox("##Music Listbox", 350 * settings.scale, 250 * settings.scale)
 			{
 				var stop = false
 				for (var i = 0, n = array_length(musicList); i < n; i++)
@@ -279,7 +280,8 @@ function levelManager_tabs()
 						break;
 				}
 				
-				if ImGui.Button("+", 20, 20)
+				var addSize = 20 * settings.scale
+				if ImGui.Button("+", addSize, addSize)
 				{
 					var musicfile = get_open_filename_ext("Ogg Vorbis files (*.ogg)|*.ogg", "", "", "Add music file to level...")
 					if (musicfile != "")

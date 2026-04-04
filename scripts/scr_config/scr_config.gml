@@ -145,9 +145,7 @@ function config_get_layers()
 }
 
 function config_get_current_layer()
-{
-	return config_get_layer(obj_mainUI.currentLayer);
-}
+{ return config_get_layer(obj_mainUI.currentLayer); }
 
 function config_find_instance_layer()
 {
@@ -176,9 +174,9 @@ function config_find_instance_layer()
 	return undefined;
 }
 
-function config_get_layer_type()
+function config_get_layer_type(layerName = obj_mainUI.currentLayer)
 {
-	var lay = config_get_current_layer()
+	var lay = config_get_layer(layerName)
 	if !is_undefined(lay)
 		return lay.type;
 }
@@ -400,7 +398,7 @@ function config_is_custom_music(musID)
 function config_get_music_title(musID)
 {
 	if !variable_struct_exists(global.config, "music")
-		return "";
+		return "None";
 	
 	for (var i = 0, n = array_length(global.config.music); i < n; i++)
 	{
@@ -413,7 +411,7 @@ function config_get_music_title(musID)
 		}
 	}
 	
-	return "";
+	return "None";
 }
 
 function config_get_object_variables(data)

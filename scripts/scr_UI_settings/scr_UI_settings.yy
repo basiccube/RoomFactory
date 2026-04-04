@@ -1,12 +1,12 @@
 {
   "$GMScript":"v1",
-  "%Name":"scr_settings",
+  "%Name":"scr_UI_settings",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"scr_settings",
+  "name":"scr_UI_settings",
   "parent":{
-    "name":"RoomFactory",
-    "path":"RoomFactory.yyp",
+    "name":"User Interface",
+    "path":"folders/User Interface.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

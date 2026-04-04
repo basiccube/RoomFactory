@@ -13,7 +13,7 @@ cyopRoomInfo = {
 	offsetY : 0
 }
 
-musicTitle = ""
+musicTitle = "None"
 customMusic = false
 
 roomFormat = ROOMFORMAT_RF

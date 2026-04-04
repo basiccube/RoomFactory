@@ -4,7 +4,7 @@ if (layer_exists(currentLayer) && !layer_get_visible(currentLayer))
 	exit;
 
 if (position_meeting(mouse_x, mouse_y, obj_roomObject) &&
-	!instance_exists(obj_objectPlacer) &&
+	!instance_exists(obj_placer) &&
 	!INPUT_USED_UI &&
 	!window_mouse_get_locked() &&
 	!draggingObject &&

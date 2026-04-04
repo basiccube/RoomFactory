@@ -1,7 +1,14 @@
 #macro ROOMFACTORY_SETTINGS_FILE "RoomFactory_Settings.json"
 #macro MAX_RECENTS 6
 
-global.settings = undefined
+enum SettingsTheme
+{
+	Light,
+	Dark
+}
+
+globalvar settings;
+settings = undefined
 
 function settingsData() constructor
 {	
@@ -12,40 +19,71 @@ function settingsData() constructor
 		h : 0,
 	}
 	
+	theme = SettingsTheme.Dark
+	scale = 1
 	recents = array_create(MAX_RECENTS, undefined)
 }
 
+function settings_exists(name)
+{ return struct_exists(settings, name); }
+
 function settings_apply()
 {
-	if is_undefined(global.settings)
+	if is_undefined(settings)
 		exit;
 		
-	window_set_rectangle(
-		global.settings.windowRect.x,
-		global.settings.windowRect.y,
-		global.settings.windowRect.w,
-		global.settings.windowRect.h
-	)
-	with (obj_windowManager)
-		event_perform(ev_step, ev_step_normal)
+	static defaults = new settingsData()
+	static initialApply = true
+	
+	if !settings_exists("scale")
+		settings.scale = defaults.scale
+	
+	if initialApply
+	{
+		window_set_rectangle(
+			settings.windowRect.x,
+			settings.windowRect.y,
+			settings.windowRect.w,
+			settings.windowRect.h
+		)
+		
+		with (obj_windowManager)
+			event_perform(ev_step, ev_step_normal)
+			
+		ImGui.AddFontFromFileTTF(UI_MAINFONT, UI_FONTSIZE * settings.scale)
+
+		globalvar mainFont;
+		mainFont = font_add(UI_MAINFONT, 10 * settings.scale, false, false, 32, 128)
+		font_enable_sdf(mainFont, true)
+			
+		initialApply = false
+	}
+	
+	if !settings_exists("theme")
+		settings.theme = defaults.theme
+	
+	if (settings.theme == SettingsTheme.Light)
+		ImGui.StyleColorsLight()
+	else
+		ImGui.StyleColorsDark()
 }
 
 function settings_load()
 {
 	if !file_exists(ROOMFACTORY_SETTINGS_FILE)
 	{
-		global.settings = new settingsData()
+		settings = new settingsData()
 		exit;
 	}
 	
 	// read settings
-	global.settings = json_parse(file_text_read_all(ROOMFACTORY_SETTINGS_FILE))
+	settings = json_parse(file_text_read_all(ROOMFACTORY_SETTINGS_FILE))
 	settings_apply()
 }
 
 function settings_save()
 {
-	with (global.settings.windowRect)
+	with (settings.windowRect)
 	{
 		x = window_get_x()
 		y = window_get_y()
@@ -53,7 +91,7 @@ function settings_save()
 		h = window_get_height()
 	}
 	
-	var json = json_stringify(global.settings, true)
+	var json = json_stringify(settings, true)
 	var file = file_text_open_write(ROOMFACTORY_SETTINGS_FILE)
 	file_text_write_string(file, json)
 	file_text_close(file)
@@ -62,14 +100,12 @@ function settings_save()
 ///@param {String} file
 function recents_push(file)
 {
-	if array_contains(global.settings.recents, file)
+	if array_contains(settings.recents, file)
 		exit;
 	
-	array_insert(global.settings.recents, 0, file)
-	array_pop(global.settings.recents)
+	array_insert(settings.recents, 0, file)
+	array_pop(settings.recents)
 }
 
 function recents_clear()
-{
-	global.settings.recents = array_create(MAX_RECENTS, undefined)
-}
+{ settings.recents = array_create(MAX_RECENTS, undefined); }

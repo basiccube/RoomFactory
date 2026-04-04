@@ -353,7 +353,7 @@ function clear_room()
 		offsetY = 0
 	}
 	
-	obj_roomManager.musicTitle = ""
+	obj_roomManager.musicTitle = "None"
 	obj_roomManager.customMusic = false
 	
 	obj_roomManager.version = 0

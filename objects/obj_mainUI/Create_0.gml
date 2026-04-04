@@ -1,4 +1,5 @@
 #macro UI_MAINFONT "fonts\\OpenSans-Bold.ttf"
+#macro UI_FONTSIZE 16
 
 enum resizeType
 {
@@ -13,18 +14,13 @@ enum resizeType
 #macro INPUT_USED_UI (MOUSE_OVER_UI || KEYBOARD_USED_UI)
 
 imgm = __ImGM()
-ImGui.__Initialize(ImGuiConfigFlags.DockingEnable | ImGuiConfigFlags.ViewportsEnable)
-ImGui.AddFontFromFileTTF(UI_MAINFONT, 16)
-
-globalvar mainFont;
-mainFont = font_add(UI_MAINFONT, 10, false, false, 32, 128)
-font_enable_sdf(mainFont, true)
-
+ImGui.__Initialize(ImGuiConfigFlags.ViewportsEnable)
 settings_load()
 
 showImGuiAboutWindow = false
 showAboutWindow = false
 showDemoWindow = false
+showSettings = false
 showConfigPicker = true
 
 errorText = "Error!"

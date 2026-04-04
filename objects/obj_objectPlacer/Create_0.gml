@@ -1,2 +1,0 @@
-objectData = undefined
-layerName = "Instances"
