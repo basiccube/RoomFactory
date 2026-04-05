@@ -18,6 +18,7 @@ function settingsData() constructor
 		w : 0,
 		h : 0,
 	}
+	windowMaximized = false
 	
 	theme = SettingsTheme.Dark
 	scale = 1
@@ -47,8 +48,15 @@ function settings_apply()
 			settings.windowRect.h
 		)
 		
+		if !settings_exists("windowMaximized")
+			settings.windowMaximized = defaults.windowMaximized
+		
 		with (obj_windowManager)
+		{
 			event_perform(ev_step, ev_step_normal)
+			if settings.windowMaximized
+				alarm[0] = 1
+		}
 			
 		ImGui.AddFontFromFileTTF(UI_MAINFONT, UI_FONTSIZE * settings.scale)
 
@@ -85,10 +93,14 @@ function settings_save()
 {
 	with (settings.windowRect)
 	{
-		x = window_get_x()
-		y = window_get_y()
-		w = window_get_width()
-		h = window_get_height()
+		// Don't save the position and size if it's maximized
+		if !settings.windowMaximized
+		{
+			x = window_get_x()
+			y = window_get_y()
+			w = window_get_width()
+			h = window_get_height()
+		}
 	}
 	
 	var json = json_stringify(settings, true)

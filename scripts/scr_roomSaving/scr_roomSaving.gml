@@ -76,7 +76,7 @@ function save_room_rf()
 			{
 				case layerelementtype_instance:
 					var inst = layer_instance_get_instance(element)
-					if (inst.object_index != obj_roomObject)
+					if (inst.object_index != obj_layerObject)
 						break
 					
 					var instdata = {
@@ -119,9 +119,9 @@ function save_room_cyop()
 	}
 	
 	rm.instances = []
-	for (var i = 0, n = instance_number(obj_roomObject); i < n; i++)
+	for (var i = 0, n = instance_number(obj_layerObject); i < n; i++)
 	{
-		var inst = instance_find(obj_roomObject, i)
+		var inst = instance_find(obj_layerObject, i)
 		
 		var instdata = {
 			deleted : false,

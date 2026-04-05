@@ -466,7 +466,7 @@ function config_get_object_variables(data)
 function create_room_object(ox, oy, olayer, odata)
 {
 	var oid = undefined
-	with (instance_create_layer(ox, oy, olayer, obj_roomObject))
+	with (instance_create_layer(ox, oy, olayer, obj_layerObject))
 	{
 		oid = id
 		objectID = odata.id

@@ -1,4 +1,7 @@
 window_set_min_width(680)
 window_set_min_height(580)
 
+window_command_hook(window_command_maximize)
+window_command_hook(window_command_restore)
+
 globalvar realmouse_x, realmouse_y;

@@ -109,6 +109,8 @@ releaseDraggedObject = function()
 			image_alpha = 1
 			if other.snapToGrid
 				move_snap(other.gridSize, other.gridSize)
+				
+			e.onDragEnd()
 		}
 	})
 	

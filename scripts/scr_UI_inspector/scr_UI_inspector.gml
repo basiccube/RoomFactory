@@ -126,34 +126,11 @@ function ui_inspector_room()
 
 global.varTypes = [VARTYPE_DEFAULT, VARTYPE_BOOL, VARTYPE_NUMBER, VARTYPE_STRING]
 
-function ui_inspector_object()
+function ui_inspector_selectable_object()
 {
 	var selectedObject = selectionArray[0]
 	
-	ImGui.Text(selectedObject.objectID)
 	ImGui.Separator()
-			
-	ImGui.Text("Position")
-			
-	var ox = ImGui.InputInt("X", selectedObject.x, 1, 5)
-	selectedObject.x = ox
-			
-	var oy = ImGui.InputInt("Y", selectedObject.y, 1, 5)
-	selectedObject.y = oy
-
-	if selectedObject.canResize
-	{
-		ImGui.Text("Scale")
-				
-		var oxscale = ImGui.InputFloat("X##Scale", selectedObject.image_xscale, 0.25, 1)
-		selectedObject.image_xscale = oxscale
-				
-		var oyscale = ImGui.InputFloat("Y##Scale", selectedObject.image_yscale, 0.25, 1)
-		selectedObject.image_yscale = oyscale
-	}
-			
-	ImGui.Separator()
-			
 	ImGui.Text("Variables")
 			
 	if ImGui.BeginListBox("##Variable Listbox")
@@ -314,7 +291,44 @@ function ui_inspector_object()
 		if !is_undefined(objdata)
 			selectedObject.variables = config_get_object_variables(objdata)
 	}
+}
+
+function ui_inspector_selectable()
+{
+	var selectedObject = selectionArray[0]
+	
+	var title = ""
+	if (selectedObject.object_index == obj_layerObject)
+		title = selectedObject.objectID
+	else if (selectedObject.object_index == obj_layerSprite)
+		title = selectedObject.spriteName
+	
+	if (title != "")
+		ImGui.Text(title)
+	ImGui.Separator()
 			
+	ImGui.Text("Position")
+			
+	var ox = ImGui.InputInt("X", selectedObject.x, 1, 5)
+	selectedObject.x = ox
+			
+	var oy = ImGui.InputInt("Y", selectedObject.y, 1, 5)
+	selectedObject.y = oy
+
+	if selectedObject.canResize
+	{
+		ImGui.Text("Scale")
+				
+		var oxscale = ImGui.InputFloat("X##Scale", selectedObject.image_xscale, 0.25, 1)
+		selectedObject.image_xscale = oxscale
+				
+		var oyscale = ImGui.InputFloat("Y##Scale", selectedObject.image_yscale, 0.25, 1)
+		selectedObject.image_yscale = oyscale
+	}
+	
+	if (selectedObject.object_index == obj_layerObject)
+		ui_inspector_selectable_object()
+	
 	ImGui.NewLine()
 			
 	if ImGui.Button("Delete", BUTTON_WIDTH, BUTTON_HEIGHT)
@@ -356,7 +370,7 @@ function ui_inspector()
 		ImGui.Separator()
 		
 		if (array_length(selectionArray) > 0 && !isMultiSelection() && !is_undefined(selectionArray[0]))
-			ui_inspector_object()
+			ui_inspector_selectable()
 		else
 			ui_inspector_room()
 		

@@ -46,7 +46,7 @@ if multiSelect
 			multiSelectStartPos.y,
 			mouse_x,
 			mouse_y,
-			obj_roomObject,
+			obj_layerSelectable,
 			false,
 			true,
 			tempMeetingList,
@@ -105,10 +105,10 @@ if (lastObject != undefined && keyboard_check(vk_alt))
 // object selection
 if (mouse_check_button_pressed(mb_left) && !keyboard_check(vk_alt) && !instance_exists(obj_placer))
 {
-	if position_meeting(mouse_x, mouse_y, obj_roomObject)
+	if position_meeting(mouse_x, mouse_y, obj_layerSelectable)
 	{
 		var deselect = true
-		var num = instance_position_list(mouse_x, mouse_y, obj_roomObject, tempMeetingList, false)
+		var num = instance_position_list(mouse_x, mouse_y, obj_layerSelectable, tempMeetingList, false)
 		for (var i = 0; i < num; i++)
 		{
 			var inst = ds_list_find_value(tempMeetingList, i)
@@ -217,6 +217,7 @@ if (mouseHovering && mouse_check_button(mb_left) && !keyboard_check(vk_alt) && !
 				mouse_y - e.y
 			)
 			
+			e.onDragStart()
 			dragPosArray[i] = pos
 		})
 		draggingObject = true

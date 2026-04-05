@@ -3,7 +3,7 @@ if !config_loaded()
 if (layer_exists(currentLayer) && !layer_get_visible(currentLayer))
 	exit;
 
-if (position_meeting(mouse_x, mouse_y, obj_roomObject) &&
+if (position_meeting(mouse_x, mouse_y, obj_layerSelectable) &&
 	!instance_exists(obj_placer) &&
 	!INPUT_USED_UI &&
 	!window_mouse_get_locked() &&
@@ -12,7 +12,7 @@ if (position_meeting(mouse_x, mouse_y, obj_roomObject) &&
 	!multiSelect &&
 	!obj_camera.mouseDrag)
 {
-	var num = instance_position_list(mouse_x, mouse_y, obj_roomObject, tempMeetingList, false)
+	var num = instance_position_list(mouse_x, mouse_y, obj_layerSelectable, tempMeetingList, false)
 	for (var i = 0; i < num; i++)
 	{
 		var inst = ds_list_find_value(tempMeetingList, i)
@@ -185,7 +185,7 @@ if multiSelect
 		multiSelectStartPos.y,
 		mouse_x,
 		mouse_y,
-		obj_roomObject,
+		obj_layerSelectable,
 		false,
 		true,
 		tempMeetingList,

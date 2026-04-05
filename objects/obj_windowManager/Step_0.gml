@@ -11,3 +11,15 @@ if ((room_width != ww || room_height != wh) && window_has_focus())
 	room_width = ww
 	room_height = wh
 }
+
+// Hooks for saving the window's maximized state
+if window_command_check(window_command_maximize)
+{
+	settings.windowMaximized = true
+	window_command_run(window_command_maximize)
+}
+if window_command_check(window_command_restore)
+{
+	settings.windowMaximized = false
+	window_command_run(window_command_restore)
+}
