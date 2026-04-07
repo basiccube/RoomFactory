@@ -164,9 +164,14 @@ function ui_mainmenubar()
 	
 	if ImGui.BeginMenu("View")
 	{
-		if ImGui.MenuItem("Show Grid", undefined, drawGrid)
-			drawGrid = !drawGrid
-		
+		if ImGui.MenuItem("Show Grid", undefined, viewOptions.drawGrid)
+			viewOptions.drawGrid = !viewOptions.drawGrid
+		if ImGui.MenuItem("Show Layer Names", undefined, viewOptions.showLayerNames)
+			viewOptions.showLayerNames = !viewOptions.showLayerNames
+		if ImGui.MenuItem("Darken Unselected Layers", undefined, viewOptions.darkenLayers)
+			viewOptions.darkenLayers = !viewOptions.darkenLayers
+			
+		ImGui.Separator()
 		if ImGui.BeginMenu("Windows")
 		{
 			if ImGui.MenuItem("Layer-specific Window", undefined, windows.layertypes)

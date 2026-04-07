@@ -2,7 +2,7 @@
 #macro LEVEL_EXTENSION_CYOP ".ini"
 
 #macro LEVEL_FILTER "Room Factory level (level.rflvl)|level.rflvl"
-#macro LEVEL_FILTER_CYOP "CYOP level (tower.ini)|*.tower.ini"
+#macro LEVEL_FILTER_CYOP "CYOP tower (tower.ini)|*.tower.ini"
 
 levelPath = ""
 levelInfoPath = ""
@@ -28,6 +28,12 @@ openLevel = function(path)
 {
 	if !file_exists(path)
 		exit;
+		
+	if (obj_roomManager.roomFormat == ROOMFORMAT_CYOP)
+	{
+		error_message("Sorry, but CYOP towers aren't supported right now.")
+		exit;
+	}
 		
 	levelPath = filename_path(path)
 	levelInfoPath = path

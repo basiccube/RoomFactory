@@ -105,6 +105,7 @@ if (lastObject != undefined && keyboard_check(vk_alt))
 // object selection
 if (mouse_check_button_pressed(mb_left) && !keyboard_check(vk_alt) && !instance_exists(obj_placer))
 {
+	var canMultiSelect = true
 	if position_meeting(mouse_x, mouse_y, obj_layerSelectable)
 	{
 		var deselect = true
@@ -119,11 +120,13 @@ if (mouse_check_button_pressed(mb_left) && !keyboard_check(vk_alt) && !instance_
 			
 			if (isMultiSelection() && array_contains(selectionArray, inst))
 			{
+				canMultiSelect = false
 				deselect = false
 				continue;
 			}
 			
 			selectObject(inst)
+			canMultiSelect = false
 			deselect = false
 			break;
 		}
@@ -133,13 +136,12 @@ if (mouse_check_button_pressed(mb_left) && !keyboard_check(vk_alt) && !instance_
 			deselectObject()
 	}
 	else
-	{
-		if (keyboard_check(vk_shift) && !multiSelect)
-		{
-			multiSelectStartPos.set(mouse_x, mouse_y)
-			multiSelect = true
-		}
 		deselectObject()
+	
+	if (canMultiSelect && keyboard_check(vk_shift) && !multiSelect)
+	{
+		multiSelectStartPos.set(mouse_x, mouse_y)
+		multiSelect = true
 	}
 }
 
@@ -239,6 +241,7 @@ if (mouseHovering && mouse_check_button(mb_left) && !keyboard_check(vk_alt) && !
 							selectedObject.bbox_right,
 							selectedObject.bbox_bottom)
 		
+		selectedObject.onResizeStart()
 		resizingObject = true
 	}
 }
@@ -363,7 +366,10 @@ else if resizingObject
 	y = py
 	
 	if !mouse_check_button(mb_left)
+	{
+		selectedObject.onResizeEnd()
 		resizingObject = false
+	}
 }
 else
 {

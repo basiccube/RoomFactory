@@ -63,6 +63,10 @@ function settings_apply()
 		globalvar mainFont;
 		mainFont = font_add(UI_MAINFONT, 10 * settings.scale, false, false, 32, 128)
 		font_enable_sdf(mainFont, true)
+		
+		globalvar smallFont;
+		smallFont = font_add(UI_SMALLFONT, 8 * settings.scale, false, false, 32, 128)
+		font_enable_sdf(smallFont, true)
 			
 		initialApply = false
 	}

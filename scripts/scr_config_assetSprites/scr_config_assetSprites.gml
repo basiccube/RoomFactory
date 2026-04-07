@@ -74,6 +74,28 @@ function ConfigAssetSprites() constructor
 	}
 	
 	///@param {String} name
+	///@return {Struct.ConfigAssetSpriteData}
+	static FindSprite = function(name)
+	{
+		var key = ds_map_find_first(map)
+		for (var i = 0, n = ds_map_size(map); i < n; i++)
+		{
+			var cat = ds_map_find_value(map, key)
+			var arr = struct_get_names(cat)
+			for (var j = 0, m = array_length(arr); j < m; j++)
+			{
+				var sprName = arr[j]
+				if (sprName == name)
+					return struct_get(cat, sprName);
+			}
+			
+			key = ds_map_find_next(map, key)
+		}
+		
+		return undefined;
+	}
+	
+	///@param {String} name
 	///@param {Struct.ConfigAssetSpriteData} data
 	static AddSpriteData = function(name, data)
 	{

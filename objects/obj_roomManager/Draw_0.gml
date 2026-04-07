@@ -12,7 +12,7 @@ if (roomFormat == ROOMFORMAT_CYOP)
 }
 
 // draw grid
-if obj_mainUI.drawGrid
+if obj_mainUI.viewOptions.drawGrid
 {
 	var gsize = obj_mainUI.gridSize
 	var gcol = c_gray

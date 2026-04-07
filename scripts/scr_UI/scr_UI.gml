@@ -90,35 +90,110 @@ function ui_layerlist()
 	{
 		ImGui.Text("Layer List")
 		ImGui.Separator()
-		ImGui.Text($"Current layer: {config_get_current_layer().displayName}")
 		
-		var arr = config_get_layers()
-		if ImGui.BeginListBox("##Layer Listbox", 220 * settings.scale, 160 * settings.scale)
+		if (obj_roomManager.roomFormat == ROOMFORMAT_CYOP)
 		{
-			for (var i = 0, n = array_length(arr); i < n; i++)
+			var updateLayer = false
+			ImGui.Text($"Instance layer {currentCYOPLayer}")
+			
+			ImGui.SameLine()
+			if ImGui.ArrowButton("##CYOPLayerLeft", 0)
 			{
-				if layer_exists(arr[i].name)
+				currentCYOPLayer--
+				updateLayer = true
+			}
+			
+			ImGui.SameLine()
+			if ImGui.ArrowButton("##CYOPLayerRight", 1)
+			{
+				currentCYOPLayer++
+				updateLayer = true
+			}
+			
+			currentCYOPLayer = clamp(currentCYOPLayer, 0, CYOP_INSTANCE_MAX_LAYERS)
+			if updateLayer
+			{
+				setCurrentLayer($"{CYOP_INSTANCE_LAYER_PREFIX}{currentCYOPLayer}")
+				selectionArray = []
+				deselectObject()
+			}
+		}
+		else
+		{
+			ImGui.Text($"Current layer: {config_get_current_layer().displayName}")
+			
+			static layerArray = config_get_layers()
+			static layerStruct = undefined
+			static layerTypes = []
+			if is_undefined(layerStruct)
+			{
+				layerStruct = {}
+				for (var i = 0, n = array_length(layerArray); i < n; i++)
 				{
-					var layVisible = layer_get_visible(arr[i].name)
-					var newVisible = ImGui.Checkbox("##visible" + arr[i].displayName, layVisible)
-					if (newVisible != layVisible)
-						layer_set_visible(arr[i].name, newVisible)
+					var lay = layerArray[i]
+					var type = lay.type
+					
+					// Replace the first character to be uppercase
+					var char = string_upper(string_char_at(type, 1))
+					type = string_insert(char, string_delete(type, 1, 1), 1)
+					
+					if !struct_exists(layerStruct, type)
+					{
+						layerStruct[$ type] = []
 						
-					ImGui.SameLine()
+						// Make instances the first tab
+						if (string_char_at(type, 1) == "I")
+							array_insert(layerTypes, 0, type)
+						else
+							array_push(layerTypes, type)
+					}
+					
+					array_push(layerStruct[$ type], lay)
+				}
+			}
+			
+			if ImGui.BeginTabBar("##LayerTabbar", ImGuiTabBarFlags.TabListPopupButton | ImGuiTabBarFlags.FittingPolicyScroll)
+			{
+				for (var i = 0, n = array_length(layerTypes); i < n; i++)
+				{
+					var arr = layerStruct[$ layerTypes[i]]
+					if ImGui.BeginTabItem(layerTypes[i])
+					{
+						if ImGui.BeginListBox($"##{layerTypes[i]}ListBox", 220 * settings.scale, 160 * settings.scale)
+						{
+							for (var j = 0, m = array_length(arr); j < m; j++)
+							{
+								if layer_exists(arr[j].name)
+								{
+									var layVisible = layer_get_visible(arr[j].name)
+									var newVisible = ImGui.Checkbox("##visible" + arr[j].displayName, layVisible)
+									if (newVisible != layVisible)
+										layer_set_visible(arr[j].name, newVisible)
+						
+									ImGui.SameLine()
+								}
+								
+								var selected = (arr[j].name == currentLayer)
+								if ImGui.Selectable(arr[j].displayName, selected)
+								{
+									setCurrentLayer(arr[j].name)
+									selectionArray = []
+									deselectObject()
+								}
+					
+								if selected
+									ImGui.SetItemDefaultFocus()
+							}
+							
+							ImGui.EndListBox()
+						}
+						
+						ImGui.EndTabItem()
+					}
 				}
 				
-				var selected = (arr[i].name == currentLayer)
-				if ImGui.Selectable(arr[i].displayName, selected)
-				{
-					selectionArray = []
-					currentLayer = arr[i].name
-					deselectObject()
-				}
-					
-				if selected
-					ImGui.SetItemDefaultFocus()
+				ImGui.EndTabBar()
 			}
-			ImGui.EndListBox()
 		}
 		
 		ImGui.End()

@@ -55,6 +55,9 @@ if isMultiSelection()
 		if instance_exists(inst)
 			drawInstanceOutline(inst, c_white)
 	}
+	
+	if draggingObject
+		window_set_cursor(cr_size_all)
 }
 
 if (array_length(selectionArray) > 0 && !isMultiSelection() && !is_undefined(selectionArray[0]))

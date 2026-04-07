@@ -33,12 +33,10 @@ assetPlace = function()
 	var lay = createLayer()
 	var spr = assetSprite.GetSprite()
 	
-	var element = layer_sprite_create(lay, x, y, spr)
 	with (instance_create_layer(x, y, lay, obj_layerSprite))
 	{
 		sprite_index = spr
 		spriteName = other.assetSprite.name
-		spriteElement = element
 	}
 }
 

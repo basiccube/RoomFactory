@@ -7,6 +7,9 @@
 #macro CONFIG_LAYER_TILE "tile"
 #macro CONFIG_LAYER_ASSET "asset"
 
+#macro CYOP_INSTANCE_LAYER_PREFIX "Instances_"
+#macro CYOP_INSTANCE_MAX_LAYERS 100
+
 global.config = {}
 global.configFileName = ""
 global.spriteCache = ds_map_create()
@@ -46,9 +49,28 @@ function config_load(name)
 	if struct_exists(json, "roomFormat")
 		obj_roomManager.roomFormat = json.roomFormat
 	print($"Config room format : {obj_roomManager.roomFormat}")
+	
+	if (obj_roomManager.roomFormat == ROOMFORMAT_CYOP)
+	{
+		// Create all instance layers for CYOP
+		json.layers = []
+		
+		for (var i = 0; i <= CYOP_INSTANCE_MAX_LAYERS; i++)
+		{
+			var lay = {
+				name : $"{CYOP_INSTANCE_LAYER_PREFIX}{i}",
+				displayName : $"Instances {i}",
+				depth : -i,
+				type : CONFIG_LAYER_INSTANCE,
+				objects : "objects"
+			}
+			
+			array_push(json.layers, lay)
+		}
+	}
 		
 	ConfigAssetSprites.FindConfigSprites()
-	obj_mainUI.currentLayer = config_find_instance_layer().name
+	obj_mainUI.setCurrentLayer(config_find_instance_layer().name)
 	return true;
 }
 
@@ -79,7 +101,7 @@ function config_unload()
 	ds_map_clear(global.spriteCache)
 	ConfigAssetSprites.ClearSprites()
 	
-	obj_mainUI.currentLayer = undefined
+	obj_mainUI.setCurrentLayer(undefined)
 	return true;
 }
 

@@ -293,6 +293,42 @@ function ui_inspector_selectable_object()
 	}
 }
 
+function ui_inspector_selectable_sprite()
+{
+	var selectedObject = selectionArray[0]
+	ImGui.Separator()
+	
+	ImGui.SetNextItemWidth(INSPECTOR_CONTROL_WIDTH)
+	var alpha = ImGui.DragFloat("Alpha", selectedObject.spriteAlpha, 0.01)
+	if (selectedObject.spriteAlpha != alpha)
+	{
+		selectedObject.spriteAlpha = clamp(alpha, 0, 1)
+		selectedObject.onAlphaUpdate()
+	}
+	
+	ImGui.SetNextItemWidth(INSPECTOR_CONTROL_WIDTH)
+	var angle = ImGui.DragFloat("Angle", selectedObject.image_angle, 0.5)
+	if (selectedObject.image_angle != angle)
+		selectedObject.image_angle = clamp(angle, 0, 360)
+	
+	ImGui.Separator()
+	
+	ImGui.SetNextItemWidth(INSPECTOR_CONTROL_WIDTH)
+	var imgIndex = ImGui.DragFloat("Image Index", selectedObject.spriteIndex, 0.1)
+	if (selectedObject.spriteIndex != imgIndex)
+		selectedObject.spriteIndex = imgIndex
+	
+	ImGui.SetNextItemWidth(INSPECTOR_CONTROL_WIDTH)
+	var imgSpeed = ImGui.DragFloat("Image Speed", selectedObject.spriteSpeed, 0.1)
+	if (selectedObject.spriteSpeed != imgSpeed)
+		selectedObject.spriteSpeed = imgSpeed
+	
+	if ImGui.Button(selectedObject.preview ? "Stop" : "Play", BUTTON_WIDTH, BUTTON_HEIGHT)
+	{
+		(selectedObject.preview ? selectedObject.stopPreview : selectedObject.startPreview)()
+	}
+}
+
 function ui_inspector_selectable()
 {
 	var selectedObject = selectionArray[0]
@@ -310,27 +346,45 @@ function ui_inspector_selectable()
 	ImGui.Text("Position")
 			
 	var ox = ImGui.InputInt("X", selectedObject.x, 1, 5)
-	selectedObject.x = ox
+	if (selectedObject.x != ox)
+	{
+		selectedObject.x = ox
+		selectedObject.onPositionUpdate()
+	}
 			
 	var oy = ImGui.InputInt("Y", selectedObject.y, 1, 5)
-	selectedObject.y = oy
+	if (selectedObject.y != oy)
+	{
+		selectedObject.y = oy
+		selectedObject.onPositionUpdate()
+	}
 
 	if selectedObject.canResize
 	{
 		ImGui.Text("Scale")
 				
 		var oxscale = ImGui.InputFloat("X##Scale", selectedObject.image_xscale, 0.25, 1)
-		selectedObject.image_xscale = oxscale
+		if (selectedObject.image_xscale != oxscale)
+		{
+			selectedObject.image_xscale = oxscale
+			selectedObject.onScaleUpdate()
+		}
 				
 		var oyscale = ImGui.InputFloat("Y##Scale", selectedObject.image_yscale, 0.25, 1)
-		selectedObject.image_yscale = oyscale
+		if (selectedObject.image_yscale != oyscale)
+		{
+			selectedObject.image_yscale = oyscale
+			selectedObject.onScaleUpdate()
+		}
 	}
 	
-	if (selectedObject.object_index == obj_layerObject)
-		ui_inspector_selectable_object()
+	switch selectedObject.object_index
+	{
+		case obj_layerObject: ui_inspector_selectable_object(); break
+		case obj_layerSprite: ui_inspector_selectable_sprite(); break
+	}
 	
-	ImGui.NewLine()
-			
+	ImGui.NewLine()		
 	if ImGui.Button("Delete", BUTTON_WIDTH, BUTTON_HEIGHT)
 	{
 		instance_destroy(selectedObject)

@@ -1,22 +1,47 @@
 event_inherited()
 
 spriteName = ""
-spriteElement = undefined
 
-savedDragAlpha = 1
+spriteAlpha = 1
+spriteIndex = 0
+spriteSpeed = 1
 
-onDragStart = function()
+preview = false
+
+startPreview = function()
 {
-	savedDragAlpha = layer_sprite_get_alpha(spriteElement)
-	layer_sprite_alpha(spriteElement, 0)
-	visible = true
+	preview = true
+	image_index = spriteIndex
+	image_speed = spriteSpeed
+}
+
+stopPreview = function()
+{
+	preview = false
+	image_index = 0
+	image_speed = 0
 }
 
 onDragEnd = function()
+{ image_alpha = spriteAlpha; }
+
+onAlphaUpdate = function()
+{ image_alpha = spriteAlpha; }
+
+onDraw = function()
 {
-	layer_sprite_x(spriteElement, x)
-	layer_sprite_y(spriteElement, y)
+	if preview
+		image_speed = spriteSpeed
 	
-	layer_sprite_alpha(spriteElement, savedDragAlpha)
-	visible = false
+	draw_sprite_ext(
+		sprite_index,
+		preview ? image_index : spriteIndex,
+		x,
+		y,
+		image_xscale,
+		image_yscale,
+		image_angle,
+		image_blend,
+		image_alpha
+	)
 }

@@ -1,9 +1,9 @@
 {
   "$GMScript":"v1",
-  "%Name":"scr_roomSaving",
+  "%Name":"scr_roomSaving_CYOP",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"scr_roomSaving",
+  "name":"scr_roomSaving_CYOP",
   "parent":{
     "name":"Room Saving and Loading",
     "path":"folders/Room Saving and Loading.yy",

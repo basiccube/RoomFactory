@@ -45,8 +45,14 @@ function update_titlebar(edited = false)
 	window_set_caption(str)
 }
 
-function draw_mouse_tooltip(offx, offy, str)
+function draw_mouse_tooltip(offx, offy, str, font = mainFont)
 {
-	draw_set_font(mainFont)
+	draw_set_font(font)
 	draw_text(realmouse_x + offx, realmouse_y + offy, str)
+}
+
+function draw_ui_text(x, y, str, font = mainFont)
+{
+	draw_set_font(font)
+	draw_text(x, y, str)
 }

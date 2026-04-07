@@ -1,4 +1,5 @@
 #macro UI_MAINFONT "fonts\\OpenSans-Bold.ttf"
+#macro UI_SMALLFONT "fonts\\OpenSans-ExtraBold.ttf"
 #macro UI_FONTSIZE 16
 
 enum resizeType
@@ -27,6 +28,12 @@ errorText = "Error!"
 errorText2 = ""
 showError = false
 
+viewOptions = {
+	drawGrid : true,
+	showLayerNames : false,
+	darkenLayers : true
+}
+
 windows = {
 	layertypes : true,
 	layerlist : true,
@@ -39,7 +46,6 @@ gridMaxSize = 32
 gridMinSize = 4
 gridIncrement = 4
 snapToGrid = true
-drawGrid = true
 
 selectionArray = []
 selectedVariableIndex = 0
@@ -60,8 +66,21 @@ resizeSavedScale = new Scale(1, 1)
 resizeSavedBBox = new Vector4(0, 0, 0, 0)
 
 currentLayer = undefined
+currentLayerID = undefined
+currentCYOPLayerType = CONFIG_LAYER_INSTANCE
+currentCYOPLayer = 0
+
 lastObject = undefined
 update_titlebar()
+
+setCurrentLayer = function(name)
+{
+	currentLayer = name
+	if is_undefined(name)
+		currentLayerID = undefined
+	else
+		currentLayerID = layer_get_id(name)
+}
 	
 selectObject = function(inst)
 {
